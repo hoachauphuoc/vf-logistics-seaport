@@ -262,22 +262,53 @@ WHERE WEATHER_IMPACT = 'Strong Wind - Caution';
 
 ---
 
-## Slide 15: Demo & Next Steps
+## Slide 15: SAP S/4HANA Integration (Phase 4)
 
-### Live Demo
+### End-to-End Enterprise Flow: Document → SAP Posting
+
+```
+B/L Approved → Automatic SAP Postings:
+  ├── FI: Vendor Invoice (Debit Freight / Credit AP)
+  ├── MM: Goods Receipt (MIGO 101 at warehouse)
+  ├── SD: Delivery + Billing (customer invoice)
+  └── CO: Cost Allocation (per cost element breakdown)
+```
+
+**Current (Demo):** SAP tables simulated in Snowflake (4 tables, 4 procedures)
+**Future (Production):** SAP No-Copy integration — zero ETL, federated queries
+
+```sql
+CALL SAP_POST_FI_DOCUMENT(1);   -- Creates vendor invoice
+CALL SAP_POST_GOODS_RECEIPT(1); -- Posts MIGO 101
+CALL SAP_CREATE_DELIVERY(1);    -- Creates delivery + billing
+CALL SAP_ALLOCATE_COSTS(1);     -- Breaks down cost elements
+```
+
+**Speaker Notes:** Phase 4 demonstrates end-to-end integration. When a B/L is approved, the system automatically creates SAP postings: vendor invoice in FI, goods receipt in MM, delivery + billing in SD, and cost allocation in CO. Currently simulated in Snowflake — in production, we'll use SAP No-Copy (Datasphere federation) for zero-ETL integration.
+
+---
+
+## Slide 16: Demo & Roadmap
+
+### Live Demo (6 steps)
 
 1. Upload document → Auto-classify (B/L detected, 95% confidence)
 2. Cross-check B/L vs Invoice → Weight discrepancy found
 3. Compliance scan → DG flagged, VGM verified
 4. Fraud scan → Duplicate container detected
 5. Weather check → Strong wind at destination port
+6. **SAP posting → FI + MM + SD + CO created automatically**
 
-### Roadmap
-- Phase 2: Gate management (3,000 trucks/day, QR tracking)
-- Phase 3: Warehouse & yard operations (7 DCs)
-- Phase 4: SAP S/4HANA integration (FI/CO, MM, SD)
+### 4-Phase Roadmap
 
-**Speaker Notes:** Let me now demonstrate the system live. [Run through the 5-step demo flow]. The platform is designed for 4 phases — today we've shown Phase 1 with full AI document intelligence. Phases 2-4 extend to the complete port logistics lifecycle.
+| Phase | Scope | Status |
+|-------|-------|--------|
+| Phase 1 | AI Document Intelligence | **LIVE** (this demo) |
+| Phase 2 | Gate Management (3,000 trucks/day) | Designed |
+| Phase 3 | Warehouse & Yard (7 DCs) | Designed |
+| Phase 4 | SAP S/4HANA (No-Copy) | **Simulated** |
+
+**Speaker Notes:** Let me demonstrate the complete flow. [6-step demo]. When a B/L is approved, SAP postings happen automatically. In production, SAP No-Copy eliminates ETL — Snowflake queries SAP data directly through Datasphere federation.
 
 ---
 
@@ -287,14 +318,16 @@ WHERE WEATHER_IMPACT = 'Strong Wind - Caution';
 
 | Object Type | Count | Examples |
 |-------------|-------|---------|
-| Tables | 10+ | BILL_OF_LADING, PORT_MASTER, HS_CODE_REFERENCE, AI_CALL_LOG |
+| Tables | 14 | BILL_OF_LADING, PORT_MASTER, HS_CODE_REFERENCE, AI_CALL_LOG, SAP_FI_DOCUMENT, SAP_MM_GOODS_RECEIPT, SAP_SD_DELIVERY, SAP_CO_COST_ALLOCATION |
 | Views | 3 | V_AI_USAGE_SUMMARY, V_AI_DAILY_COST, V_PORT_WEATHER_FORECAST |
-| Procedures | 11 | CLASSIFY_DOCUMENT, CHECK_COMPLIANCE, DETECT_DUPLICATES |
+| Procedures | 16 | AI procedures (12) + SAP procedures (4) |
 | Streamlit | 1 | VF_LOGISTICS_DASHBOARD (5 pages) |
-| Stages | 1 | STREAMLIT_STAGE |
+| Agent | 1 | MENDIX_ASSISTANT (multilingual, auto model) |
+| Stages | 2 | STREAMLIT_STAGE, BL_DOCUMENTS_STAGE |
 | Roles | 1 | MENDIX_SERVICE_ROLE (51 grants) |
 | Marketplace | 1 | Pelmorex Global Weather Data |
 
 ### Model: llama3-8b (all procedures)
 ### Auth: Key-pair JWT
 ### Framework: Mendix + Snowflake (no middleware)
+### SAP Strategy: No-Copy (Datasphere federation, zero ETL)
