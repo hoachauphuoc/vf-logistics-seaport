@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Snowflake credentials - NEVER commit these
+*.p8
+*.pem
+config.toml
+connections.toml
+
+# Keys
+keys/
+*.key
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
