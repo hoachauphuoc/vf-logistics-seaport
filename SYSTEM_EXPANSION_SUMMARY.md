@@ -1,323 +1,114 @@
-# VF_LOGISTICS_PORTAL - PHASE 2-4 DATABASE EXPANSION
+# VF Logistics Portal - Phase 2-4 Database Expansion
 
-## ✅ HOÀN TẤT - 3 SQL FILES ĐÃ ĐƯỢC TẠO
+## Summary
 
-Tôi đã tạo thành công 3 file SQL mở rộng cho **VF_Logistics_Portal** theo đúng ràng buộc **Open-Closed Principle**:
+3 SQL files created to expand VF_Logistics_Portal following **Open-Closed Principle**:
 
-### 📁 Files Đã Tạo
+| File | Phase | Content |
+|------|-------|---------|
+| `phase2_transportation.sql` | Phase 2 | Gate operations, transportation tracking |
+| `phase3_warehouse_yard.sql` | Phase 3 | Warehouse inventory, yard management |
+| `phase4_sap_integration.sql` | Phase 4 | SAP ERP posting simulation |
 
-1. **`phase2_transportation.sql`** (391 dòng) - Transportation & Gate Management
-2. **`phase3_warehouse_yard.sql`** (540 dòng) - Warehouse & Yard Optimization  
-3. **`phase4_sap_integration.sql`** (596 dòng) - SAP ERP Integration Queue
+## Design Principles Applied
 
----
+1. **Open-Closed Principle**: New phases don't modify Phase 1 schema
+2. **Referential Integrity**: Cross-phase links via EXTRACT_ID, TRANSACTION_ID
+3. **Scalability**: Each phase operates independently, can be deployed incrementally
+4. **Monitoring**: Built-in views for pipeline health tracking
 
-## 🔒 TUÂN THỦ CÁC RÀNG BUỘC
+## Phase 2: Land Transportation & Gate Management
 
-### ✅ 1. NON-REGRESSION (Không Phá Vỡ Phase 1)
+**Schema**: PHASE2_SCHEMA
 
-**KHÔNG SỬA ĐỔI:**
-- ❌ `ShipmentRecord` table
-- ❌ `BillOfLading_Doc` table  
-- ❌ `ShipmentRecord_BillOfLading_Doc` association
-- ❌ SQL logic `SNOWFLAKE.CORTEX.EXTRACT_ANSWER`
+### Tables
+- `GATE_TRANSACTIONS` — Truck gate-in/gate-out records
+- `TRANSPORTATION_EXTENSION` — Additional transport data linked to Phase 1
 
-**CHỈ MỞ RỘNG:**
-- ✅ Tạo schemas mới: `PHASE2_SCHEMA`, `PHASE3_SCHEMA`, `PHASE4_SCHEMA`
-- ✅ Tạo tables mới với Foreign Keys đến Phase 1
-- ✅ Tạo views và stored procedures mới
+### Key Features
+- QR code scanning for gate entry
+- Zalo Bot notification integration
+- Real-time truck tracking in yard
+- 3,000 trucks/day capacity design
 
-### ✅ 2. INTEGRATION VIA FOREIGN KEYS
+### Views
+- `V_GATE_OPERATIONS_WITH_SHIPMENT` — Join gate + B/L data
+- `V_ACTIVE_TRUCKS_IN_YARD` — Current trucks inside port
+- `V_DAILY_GATE_STATISTICS` — Gate throughput metrics
 
-**Tất cả tables mới đều link đến Phase 1:**
+## Phase 3: Warehouse & Terminal Management
 
+**Schema**: PHASE3_SCHEMA
+
+### Tables
+- `WAREHOUSE_INVENTORY` — Inventory at 7 distribution centers
+- `YARD_OPERATIONS` — Container placement and movement
+
+### Key Features
+- 7 distribution center support (WH01-WH07)
+- Yard allocation scoring algorithm
+- Restacking detection and optimization
+- Offline sync capability for remote warehouses
+
+### Views
+- `V_INVENTORY_SUMMARY` — Stock levels by warehouse
+- `V_YARD_UTILIZATION` — Yard occupancy metrics
+- `V_RESTACKING_CANDIDATES` — Containers needing repositioning
+
+## Phase 4: SAP S/4HANA Integration
+
+**Schema**: PHASE4_SCHEMA (now also simulated in MENDIX_APP.AGENTS)
+
+### Tables
+- `SAP_FI_DOCUMENT` — Financial accounting postings
+- `SAP_FI_LINE_ITEM` — Debit/credit line items
+- `SAP_MM_GOODS_RECEIPT` — Material goods receipt (MIGO 101)
+- `SAP_SD_DELIVERY` — Sales delivery + billing
+- `SAP_CO_COST_ALLOCATION` — Cost element breakdown
+
+### Key Features
+- Automatic SAP posting on B/L approval
+- Multi-module integration (FI, MM, SD, CO)
+- Cost element granularity (Ocean, THC, Doc Fee, BAF, Insurance)
+- Future: SAP No-Copy (Datasphere federation, zero ETL)
+
+### Stored Procedures
+- `SAP_POST_FI_DOCUMENT(bl_id)` — Create vendor invoice
+- `SAP_POST_GOODS_RECEIPT(bl_id)` — Post MIGO 101
+- `SAP_CREATE_DELIVERY(bl_id)` — Create delivery + billing
+- `SAP_ALLOCATE_COSTS(bl_id)` — Allocate cost elements
+
+## Deployment Instructions
+
+### Prerequisites
+- Phase 1 already deployed and operational
+- ACCOUNTADMIN role access
+- COMPUTE_WH warehouse available
+
+### Execution Order
 ```sql
--- Phase 2
-CONSTRAINT FK_Gate_Operations_ShipmentRecord 
-    FOREIGN KEY (ContainerNumber) 
-    REFERENCES VF_LOGISTICS_DB.PHASE1_SCHEMA.ShipmentRecord(ContainerNumber)
+-- 1. Phase 2 (depends on Phase 1)
+SOURCE 'phase2_transportation.sql';
 
--- Phase 3
-CONSTRAINT FK_Warehouse_Inventory_ShipmentRecord 
-    FOREIGN KEY (ContainerNumber) 
-    REFERENCES VF_LOGISTICS_DB.PHASE1_SCHEMA.ShipmentRecord(ContainerNumber)
+-- 2. Phase 3 (depends on Phase 1 & 2)
+SOURCE 'phase3_warehouse_yard.sql';
 
--- Phase 4
-CONSTRAINT FK_SAP_Sync_Queue_ShipmentRecord 
-    FOREIGN KEY (ContainerNumber) 
-    REFERENCES VF_LOGISTICS_DB.PHASE1_SCHEMA.ShipmentRecord(ContainerNumber)
+-- 3. Phase 4 (depends on all previous phases)
+SOURCE 'phase4_sap_integration.sql';
+
+-- 4. Verify
+SELECT 'PHASE2' as PHASE, COUNT(*) as OBJECTS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PHASE2_SCHEMA'
+UNION ALL
+SELECT 'PHASE3', COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PHASE3_SCHEMA'
+UNION ALL
+SELECT 'PHASE4', COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PHASE4_SCHEMA';
 ```
 
-**Extension Table (nếu cần thêm data mà không sửa Phase 1):**
-- `ShipmentRecord_Transportation_Extension` (1-to-1 với ShipmentRecord)
+## Current Status
 
-### ✅ 3. SCOPE DELIVERABLES
-
-| Phase | Table | Stored Procedures | Views |
-|-------|-------|-------------------|-------|
-| **Phase 2** | `Gate_Operations` | • `SP_Match_GateOperation_To_Shipment`<br>• `SP_Record_GateOut` | • `V_Gate_Operations_WithShipment`<br>• `V_Active_Trucks_In_Yard`<br>• `V_Daily_Gate_Statistics` |
-| **Phase 3** | `Warehouse_Inventory`<br>`Yard_Configuration` | • `SP_Optimize_Yard_Placement`<br>• `SP_Assign_Container_To_Slot`<br>• `SP_Calculate_Restacking_Needs` | • `V_Warehouse_Inventory_Complete`<br>• `V_Warehouse_Capacity`<br>• `V_Urgent_Containers` |
-| **Phase 4** | `SAP_Sync_Queue`<br>`SAP_Integration_Log` | • `SP_Enqueue_SAP_Sync`<br>• `SP_Update_SAP_Sync_Status`<br>• `SP_Get_Pending_SAP_Syncs` | • `V_SAP_Sync_Complete`<br>• `V_SAP_Sync_Dashboard`<br>• `V_Failed_SAP_Syncs`<br>• `V_End_To_End_Pipeline_Status` |
-
----
-
-## 📋 CHI TIẾT TỪNG PHASE
-
-### PHASE 2: TRANSPORTATION & GATE MANAGEMENT
-
-**Main Table: `Gate_Operations`**
-```sql
--- Links to Phase 1 via ContainerNumber (FK)
--- Tracks truck gate-in/gate-out events
--- Supports QR code, Zalo Bot, Anonymous Portal
-```
-
-**Key Features:**
-- ✅ Foreign Key → `ShipmentRecord.ContainerNumber`
-- ✅ Duration calculation (computed column)
-- ✅ Assigns `AssignedYardLocation` (populated by Phase 3)
-- ✅ Zalo Bot integration tracking
-- ✅ Anonymous portal session tracking
-
-**Stored Procedures:**
-1. **`SP_Match_GateOperation_To_Shipment`** - Validates container exists in Phase 1 before creating gate operation
-2. **`SP_Record_GateOut`** - Updates gate-out time and status
-
-**Views:**
-- `V_Gate_Operations_WithShipment` - Joins Phase 1 + Phase 2 data
-- `V_Active_Trucks_In_Yard` - Real-time yard occupancy
-- `V_Daily_Gate_Statistics` - Daily metrics
-
----
-
-### PHASE 3: WAREHOUSE & YARD MANAGEMENT
-
-**Main Tables:**
-1. **`Warehouse_Inventory`** - Container storage tracking
-2. **`Yard_Configuration`** - Master data for yard slots
-
-**Key Features:**
-- ✅ Foreign Keys → `ShipmentRecord.ContainerNumber` + `Gate_Operations.GateID`
-- ✅ AI-powered yard allocation (based on ETD from Phase 1)
-- ✅ Restacking minimization algorithm
-- ✅ Offline mobile app sync tracking
-- ✅ 7 Distribution Centers support
-
-**Stored Procedures:**
-1. **`SP_Optimize_Yard_Placement`** - AI recommendation based on vessel ETD from Phase 1
-2. **`SP_Assign_Container_To_Slot`** - Assigns container + **updates Phase 2** `AssignedYardLocation`
-3. **`SP_Calculate_Restacking_Needs`** - Identifies containers blocked by others with later ETD
-
-**Views:**
-- `V_Warehouse_Inventory_Complete` - Phase 1 + 2 + 3 joined
-- `V_Warehouse_Capacity` - Real-time capacity for 7 DCs
-- `V_Urgent_Containers` - Containers loading within 3 days
-
----
-
-### PHASE 4: SAP ERP INTEGRATION
-
-**Main Tables:**
-1. **`SAP_Sync_Queue`** - Sync request queue with retry logic
-2. **`SAP_Integration_Log`** - Audit trail for all attempts
-
-**Key Features:**
-- ✅ Foreign Key → `ShipmentRecord.ContainerNumber`
-- ✅ Retry logic with exponential backoff (5, 15, 45 min)
-- ✅ Max retry limit (default: 3 attempts)
-- ✅ Error tracking and manual intervention flags
-- ✅ Financial data (invoice amount, payment status)
-- ✅ Zero-Copy SAP BDC integration support
-
-**Stored Procedures:**
-1. **`SP_Enqueue_SAP_Sync`** - Creates new sync request (validates Phase 1 container exists)
-2. **`SP_Update_SAP_Sync_Status`** - Updates status, handles retries
-3. **`SP_Get_Pending_SAP_Syncs`** - Returns ready-to-process syncs (priority ordered)
-
-**Views:**
-- `V_SAP_Sync_Complete` - Phase 1-4 joined with end-to-end metrics
-- `V_SAP_Sync_Dashboard` - Success rate, payment status, KPIs
-- `V_Failed_SAP_Syncs` - Syncs needing attention
-- `V_End_To_End_Pipeline_Status` - **Complete journey Phase 1→2→3→4**
-
----
-
-## 🚀 TRIỂN KHAI
-
-### Bước 1: Chạy Phase 2
-```bash
-# Trong Snowflake Worksheet
-USE DATABASE VF_LOGISTICS_DB;
--- Chạy toàn bộ file phase2_transportation.sql
-```
-
-### Bước 2: Chạy Phase 3
-```bash
--- Chạy toàn bộ file phase3_warehouse_yard.sql
-```
-
-### Bước 3: Chạy Phase 4
-```bash
--- Chạy toàn bộ file phase4_sap_integration.sql
-```
-
-### Bước 4: Kiểm Tra
-```sql
--- Verify all schemas
-SHOW SCHEMAS IN DATABASE VF_LOGISTICS_DB;
-
--- Verify Phase 2 objects
-SHOW TABLES IN SCHEMA VF_LOGISTICS_DB.PHASE2_SCHEMA;
-SHOW VIEWS IN SCHEMA VF_LOGISTICS_DB.PHASE2_SCHEMA;
-SHOW PROCEDURES IN SCHEMA VF_LOGISTICS_DB.PHASE2_SCHEMA;
-
--- Verify Phase 3 objects
-SHOW TABLES IN SCHEMA VF_LOGISTICS_DB.PHASE3_SCHEMA;
-SHOW VIEWS IN SCHEMA VF_LOGISTICS_DB.PHASE3_SCHEMA;
-SHOW PROCEDURES IN SCHEMA VF_LOGISTICS_DB.PHASE3_SCHEMA;
-
--- Verify Phase 4 objects
-SHOW TABLES IN SCHEMA VF_LOGISTICS_DB.PHASE4_SCHEMA;
-SHOW VIEWS IN SCHEMA VF_LOGISTICS_DB.PHASE4_SCHEMA;
-SHOW PROCEDURES IN SCHEMA VF_LOGISTICS_DB.PHASE4_SCHEMA;
-```
-
----
-
-## 🔗 DATA FLOW
-
-```
-Phase 1 (Existing - DO NOT MODIFY)
-    ↓ ContainerNumber (FK)
-    ↓
-Phase 2: Gate Operations
-    • SP_Match_GateOperation_To_Shipment validates Phase 1
-    • Records gate-in/gate-out
-    • AssignedYardLocation ← populated by Phase 3
-    ↓ ContainerNumber + GateID (FK)
-    ↓
-Phase 3: Warehouse Inventory
-    • SP_Optimize_Yard_Placement reads ETD from Phase 1
-    • SP_Assign_Container_To_Slot updates Phase 2
-    • Minimizes restacking via ETD ordering
-    ↓ ContainerNumber + WarehouseID (FK)
-    ↓
-Phase 4: SAP Sync Queue
-    • SP_Enqueue_SAP_Sync validates Phase 1
-    • Retry logic + error tracking
-    • Financial data tracking
-```
-
----
-
-## 📊 SAMPLE USAGE
-
-### Scenario: Container Flow Through All Phases
-
-```sql
--- 1. Container arrives at gate (Phase 2)
-CALL VF_LOGISTICS_DB.PHASE2_SCHEMA.SP_Match_GateOperation_To_Shipment(
-    'GATE-001',
-    'CONT1234567',  -- Must exist in Phase 1
-    '51A-12345'
-);
-
--- 2. Get yard placement recommendation (Phase 3)
-CALL VF_LOGISTICS_DB.PHASE3_SCHEMA.SP_Optimize_Yard_Placement('CONT1234567');
--- Returns: "Recommended slot A-12-03 with score 85.5"
-
--- 3. Assign to warehouse slot (Phase 3)
-CALL VF_LOGISTICS_DB.PHASE3_SCHEMA.SP_Assign_Container_To_Slot(
-    'WH-001',
-    'CONT1234567',
-    'GATE-001',
-    'WH-1',
-    'A-12-03'
-);
--- This also updates Phase 2 Gate_Operations.AssignedYardLocation
-
--- 4. Enqueue SAP sync (Phase 4)
-CALL VF_LOGISTICS_DB.PHASE4_SCHEMA.SP_Enqueue_SAP_Sync(
-    'SAP-001',
-    'CONT1234567',
-    'GATE-001',
-    'WH-001',
-    'PRD',
-    1  -- High priority
-);
-
--- 5. View end-to-end status
-SELECT * FROM VF_LOGISTICS_DB.PHASE4_SCHEMA.V_End_To_End_Pipeline_Status
-WHERE ContainerNumber = 'CONT1234567';
-```
-
----
-
-## 🎯 KEY DESIGN DECISIONS
-
-### 1. Open-Closed Principle Applied
-- **ZERO modifications** to Phase 1 objects
-- All new functionality via **new schemas/tables/procedures**
-- Phase 1 data read via **JOINs** in views (READ-ONLY)
-
-### 2. Foreign Key Strategy
-- All phases link to `ShipmentRecord.ContainerNumber` (centralized identifier)
-- Cascading relationships: Phase 2 ← Phase 3 ← Phase 4
-
-### 3. Extension Pattern
-- `ShipmentRecord_Transportation_Extension` demonstrates 1-to-1 extension
-- Can add more extension tables without touching Phase 1
-
-### 4. Cross-Phase Updates
-- Phase 3 **writes back** to Phase 2 (`AssignedYardLocation`)
-- Done via stored procedure, not FK cascade
-- Maintains loose coupling
-
-### 5. Business Logic Location
-- **Views** contain read-only business logic (urgency levels, alerts)
-- **Stored Procedures** contain write logic and validations
-- Separates concerns cleanly
-
----
-
-## ⚠️ IMPORTANT NOTES
-
-### Phase 1 Integration Points
-All Phase 2-4 objects assume Phase 1 has:
-- Table: `VF_LOGISTICS_DB.PHASE1_SCHEMA.ShipmentRecord`
-- Primary Key: `ContainerNumber VARCHAR(50)`
-- Columns used: `BL_Number`, `Shipper`, `Consignee`, `Vessel`, `ETD`, `ETA`
-
-**If Phase 1 structure is different**, adjust FK references in:
-- `phase2_transportation.sql` Line 65-67
-- `phase3_warehouse_yard.sql` Line 89-91
-- `phase4_sap_integration.sql` Line 72-74
-
-### Mendix Integration
-These SQL scripts provide the database layer. Mendix apps should:
-- **Phase 2**: Call `SP_Match_GateOperation_To_Shipment` on QR scan
-- **Phase 3**: Call `SP_Optimize_Yard_Placement` then `SP_Assign_Container_To_Slot`
-- **Phase 4**: Call `SP_Enqueue_SAP_Sync` → Poll `SP_Get_Pending_SAP_Syncs` → Process → Call `SP_Update_SAP_Sync_Status`
-
----
-
-## ✅ VERIFICATION CHECKLIST
-
-- [x] 3 SQL files created
-- [x] All Foreign Keys reference Phase 1 `ShipmentRecord.ContainerNumber`
-- [x] NO modifications to Phase 1 objects
-- [x] Extension table pattern demonstrated
-- [x] Cross-phase integration (Phase 3 updates Phase 2)
-- [x] Stored procedures for all CRUD operations
-- [x] Monitoring views for each phase
-- [x] End-to-end pipeline view (Phase 1→2→3→4)
-- [x] Sample usage examples in comments
-- [x] Retry logic for SAP sync
-- [x] AI-powered yard optimization
-
----
-
-**Tạo bởi**: Cortex Code - Snowflake Desktop IDE  
-**Ngày**: 2026-06-22  
-**Tuân thủ**: Open-Closed Principle  
-**Trạng thái**: ✅ READY FOR DEPLOYMENT
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Phase 1 | **LIVE** | AI Document Intelligence (10 B/Ls, 12 procedures) |
+| Phase 2 | Designed | SQL ready, tables defined |
+| Phase 3 | Designed | SQL ready, tables defined |
+| Phase 4 | **Simulated** | SAP tables + procedures live in MENDIX_APP.AGENTS |

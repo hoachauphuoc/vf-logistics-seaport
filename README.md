@@ -190,7 +190,12 @@ SELECT * FROM MENDIX_APP.AGENTS.V_AI_USAGE_SUMMARY;
 SELECT MAX(PROCESSED_AT) FROM MENDIX_APP.AGENTS.BILL_OF_LADING;
 ```
 
-## Team
+## Team SORA
+
+| Member | Role | Contact |
+|--------|------|---------|
+| **Chau Phuoc Hoa** | Team Lead / Backend Developer | hoachauphuoc@gmail.com |
+| **Nguyen Quoc Cuong** | Frontend Developer | walkeralan620@gmail.com |
 
 - **Project**: VF Logistics AI-Powered Seaport Platform
 - **Built with**: Snowflake CoCo CLI (Cortex Code)

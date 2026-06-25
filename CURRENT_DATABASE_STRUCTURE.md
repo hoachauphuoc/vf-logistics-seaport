@@ -1,8 +1,8 @@
 # VF_LOGISTICS_PORTAL - CURRENT DATABASE STRUCTURE
 
-## 📊 TỔNG QUAN TOÀN BỘ HỆ THỐNG
+## 📊 COMPLETE SYSTEM OVERVIEW
 
-Đây là cấu trúc database **ĐẦY ĐỦ** cho VF_Logistics_Portal, bao gồm Phase 1 (existing) và Phase 2-4 (mới tạo).
+This is the **COMPLETE** database structure for VF_Logistics_Portal, including Phase 1 (existing) and Phase 2-4 (newly created).
 
 ---
 
@@ -68,12 +68,12 @@ VF_LOGISTICS_DB
 
 ---
 
-## 📋 CHI TIẾT TỪNG SCHEMA
+## SCHEMA DETAILS
 
 ### 🔴 PHASE1_SCHEMA (EXISTING - DO NOT MODIFY)
 
-**Status**: ✅ Đã tồn tại, hoạt động tốt  
-**Purpose**: Bill of Lading PDF extraction với Cortex AI
+**Status**: ✅ Existing, operational
+**Purpose**: Bill of Lading PDF extraction with Cortex AI
 
 #### Tables
 
@@ -119,7 +119,7 @@ Type: Many-to-Many relationship
 
 ### 🟢 PHASE2_SCHEMA (NEW - Transportation & Gate Management)
 
-**Purpose**: Quản lý gate-in/gate-out, Zalo Bot, QR code scanning
+**Purpose**: Gate-in/gate-out management, Zalo Bot, QR code scanning
 
 #### Tables (2)
 
@@ -589,8 +589,8 @@ SAP_Sync_Queue.SyncID [PK]
 ## 🚀 DEPLOYMENT CHECKLIST
 
 ### Prerequisites
-- [ ] Snowflake account với ACCOUNTADMIN role
-- [ ] Warehouse: COMPUTE_WH (hoặc tạo mới)
+- [ ] Snowflake account with ACCOUNTADMIN role
+- [ ] Warehouse: COMPUTE_WH (or create new)
 - [ ] Stage: @MY_STAGE cho PDF files
 - [ ] Mendix JDBC connector configured
 

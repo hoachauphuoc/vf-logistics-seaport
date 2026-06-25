@@ -331,3 +331,12 @@ CALL SAP_ALLOCATE_COSTS(1);     -- Breaks down cost elements
 ### Auth: Key-pair JWT
 ### Framework: Mendix + Snowflake (no middleware)
 ### SAP Strategy: No-Copy (Datasphere federation, zero ETL)
+
+---
+
+## Team SORA
+
+| Member | Role | Contact |
+|--------|------|---------|
+| **Chau Phuoc Hoa** | Team Lead / Backend Developer | hoachauphuoc@gmail.com |
+| **Nguyen Quoc Cuong** | Frontend Developer | walkeralan620@gmail.com |
