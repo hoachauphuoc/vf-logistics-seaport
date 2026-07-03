@@ -85,7 +85,7 @@ if st.button(t["screen_btn"]):
                         for m in match_list[:5]:
                             st.markdown(f"- ⚠️ {m}")
                 else:
-                    st.success(f"✅ **'{party_name}'** — No sanctions match (screened {screened:,} entities)")
+                    st.success(f"✅ **'{party_name}'** — No sanctions match (screened {int(screened):,} entities)")
                 
                 with st.expander("📋 Full Screening Details"):
                     for key, val in data.items():

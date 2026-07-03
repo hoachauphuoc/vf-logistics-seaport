@@ -141,7 +141,10 @@ if total_logs > 0:
         log_df.index = range(offset + 1, offset + 1 + len(log_df))
         log_df.index.name = "#"
         st.dataframe(rename_columns(log_df, st.session_state.lang), use_container_width=True)
-        st.download_button("📥 Export AI Log CSV", log_df.to_csv(index=False), "ai_call_log.csv", "text/csv", key="log_csv")
+        try:
+            st.download_button("📥 Export AI Log CSV", log_df.to_csv(index=False), "ai_call_log.csv", "text/csv", key="log_csv")
+        except:
+            pass
     except Exception as e:
         st.error(f"⚠️ {str(e)[:150]}")
 
@@ -161,6 +164,37 @@ try:
         st.info(t["no_chat"])
 except Exception as e:
     st.info(t["no_chat"])
+
+st.divider()
+
+# AI Proactive Insights
+st.subheader("🧠 AI Proactive Insights")
+st.caption("AI analyzes 10K+ records and generates executive-level insights: risks, opportunities, trends, anomalies.")
+
+lang = st.session_state.get("lang", "EN")
+if st.button("🧠 Generate AI Insights" if lang == "EN" else "🧠 Tạo Insights AI" if lang == "VN" else "🧠 AIインサイト生成"):
+    with st.spinner("AI analyzing 10,010 records for patterns..."):
+        try:
+            import json
+            result = session.sql(f"CALL AI_GENERATE_INSIGHTS('{lang}')").collect()[0][0]
+            data = json.loads(result) if isinstance(result, str) else result
+            if isinstance(data, dict) and data.get("status") == "SUCCESS":
+                insights_raw = data.get("insights", "[]")
+                insights = json.loads(insights_raw) if isinstance(insights_raw, str) else insights_raw
+                if isinstance(insights, list):
+                    for item in insights:
+                        cat = item.get("category", "INFO")
+                        icon = {"RISK": "🔴", "OPPORTUNITY": "🟢", "TREND": "📈", "ANOMALY": "⚠️", "RECOMMENDATION": "💡"}.get(cat, "📌")
+                        priority = item.get("priority", "MEDIUM")
+                        with st.expander(f"{icon} [{priority}] {item.get('title', cat)}", expanded=(priority == 'HIGH')):
+                            st.markdown(item.get("insight", ""))
+                else:
+                    st.markdown(str(insights_raw)[:500])
+                st.caption(f"📊 Data: {data.get('data_summary', '')[:200]}")
+            else:
+                st.warning(f"⚠️ {data.get('error', 'Unknown error')[:150]}")
+        except Exception as e:
+            st.error(f"⚠️ Insights generation failed: {str(e)[:150]}")
 
 st.divider()
 try:

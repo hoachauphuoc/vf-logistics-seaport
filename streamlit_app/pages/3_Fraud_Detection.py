@@ -6,6 +6,7 @@ from i18n import init_language, rename_columns
 st.set_page_config(page_title="Fraud Detection", page_icon="🚨", layout="wide")
 session = get_active_session()
 t = init_language()
+lang = st.session_state.get("lang", "EN")
 
 st.title(t["fraud_title"])
 st.caption(t["fraud_subtitle"])
@@ -95,7 +96,10 @@ if total_alerts > 0:
 
         st.caption(f"{t['page']} {page_num} {t['of']} {total_pages}")
         st.dataframe(rename_columns(alerts_df, st.session_state.lang), use_container_width=True)
-        st.download_button("📥 Export Alerts CSV", alerts_df.to_csv(index=False), "fraud_alerts.csv", "text/csv", key="fraud_csv")
+        try:
+            st.download_button("📥 Export Alerts CSV", alerts_df.to_csv(index=False), "fraud_alerts.csv", "text/csv", key="fraud_csv")
+        except:
+            pass
     except Exception as e:
         st.error(f"⚠️ {str(e)[:150]}")
     

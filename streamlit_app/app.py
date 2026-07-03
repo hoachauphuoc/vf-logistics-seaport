@@ -149,7 +149,10 @@ try:
     recent_df.index = range(offset + 1, offset + 1 + len(recent_df))
     recent_df.index.name = "#"
     st.dataframe(rename_columns(recent_df, st.session_state.lang), use_container_width=True)
-    st.download_button("📥 Export CSV", recent_df.to_csv(index=False), "shipments_export.csv", "text/csv", key="home_csv")
+    try:
+        st.download_button("📥 Export CSV", recent_df.to_csv(index=False), "shipments_export.csv", "text/csv", key="home_csv")
+    except:
+        pass
 except Exception as e:
     st.error(f"⚠️ {str(e)[:150]}")
 
