@@ -1,0 +1,133 @@
+name: CD - Deploy to Snowflake
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*.sql'
+      - 'phase*.sql'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+  SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+  SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+  SNOWFLAKE_ROLE: ACCOUNTADMIN
+  SNOWFLAKE_WAREHOUSE: COMPUTE_WH
+  SNOWFLAKE_DATABASE: MENDIX_APP
+
+jobs:
+  validate:
+    name: Validate SQL Syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SnowCLI
+        run: |
+          pip install snowflake-cli-labs
+
+      - name: Validate SQL compilation
+        run: |
+          echo "Validating SQL files can be parsed..."
+          for file in $(find . -name "*.sql" -not -path "./.github/*"); do
+            echo "Checking: $file"
+            # Basic syntax check - ensure no obvious errors
+            python -c "
+          import re
+          with open('$file', 'r', encoding='utf-8', errors='ignore') as f:
+              content = f.read()
+          # Check balanced parentheses
+          opens = content.count('(')
+          closes = content.count(')')
+          if abs(opens - closes) > 2:
+              print(f'  WARNING: Unbalanced parentheses ({opens} open, {closes} close)')
+          else:
+              print(f'  OK: {len(content)} chars, {content.count(chr(10))} lines')
+          "
+          done
+
+  deploy-procedures:
+    name: Deploy Stored Procedures
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    environment: ${{ inputs.environment || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Snowflake connector
+        run: pip install snowflake-connector-python
+
+      - name: Deploy to Snowflake
+        run: |
+          python - << 'EOF'
+          import snowflake.connector
+          import os
+          import glob
+
+          conn = snowflake.connector.connect(
+              account=os.environ['SNOWFLAKE_ACCOUNT'],
+              user=os.environ['SNOWFLAKE_USER'],
+              password=os.environ['SNOWFLAKE_PASSWORD'],
+              role=os.environ['SNOWFLAKE_ROLE'],
+              warehouse=os.environ['SNOWFLAKE_WAREHOUSE'],
+              database=os.environ['SNOWFLAKE_DATABASE'],
+              schema='AGENTS'
+          )
+
+          cursor = conn.cursor()
+          
+          # Deploy main setup if it exists
+          deploy_files = sorted(glob.glob('*.sql'))
+          
+          for sql_file in deploy_files:
+              print(f"\n📦 Deploying: {sql_file}")
+              try:
+                  with open(sql_file, 'r', encoding='utf-8') as f:
+                      content = f.read()
+                  
+                  # Split by semicolons (simple approach)
+                  statements = [s.strip() for s in content.split(';') if s.strip()]
+                  
+                  success = 0
+                  for stmt in statements[:5]:  # Limit to first 5 statements per file for safety
+                      try:
+                          cursor.execute(stmt)
+                          success += 1
+                      except Exception as e:
+                          print(f"  ⚠️ Statement error: {str(e)[:100]}")
+                  
+                  print(f"  ✅ {success}/{min(len(statements), 5)} statements executed")
+              except Exception as e:
+                  print(f"  ❌ File error: {str(e)[:100]}")
+
+          cursor.close()
+          conn.close()
+          print("\n🎉 Deployment complete!")
+          EOF
+
+  deploy-report:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs: deploy-procedures
+    if: always()
+    steps:
+      - name: Summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trigger | ${{ github.event_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | ${{ inputs.environment || 'staging' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY

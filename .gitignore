@@ -1,36 +1,53 @@
-# Byte-compiled / optimized / DLL files
+# Snowflake
+*.snowflake_session
+.snowflake/
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual environments
-.venv/
+*.so
+.Python
+env/
 venv/
-ENV/
+.venv/
+*.egg-info/
+dist/
+build/
 
 # IDE
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Snowflake credentials - NEVER commit these
+# Secrets & Credentials
 *.p8
 *.pem
-config.toml
-connections.toml
-
-# Keys
-keys/
 *.key
+.env
+.env.local
+credentials.json
+snowflake_key.p8
+
+# Generated files (regenerate with scripts)
+VF_Logistics_Presentation.pptx
 
 # Logs
 *.log
+logs/
 
-# Environment files
-.env
-.env.local
+# Mendix (if frontend is separate repo)
+deployment/
+releases/
+.mendix-cache/
+
+# Temp
+*.tmp
+*.bak

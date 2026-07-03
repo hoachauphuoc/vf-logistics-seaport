@@ -133,9 +133,9 @@ def create_presentation():
     # ========== SLIDE 1: Title ==========
     slide = prs.slides.add_slide(prs.slide_layouts[6])  # Blank
     set_slide_bg(slide)
-    add_title(slide, "VF Logistics", top=Inches(2.0), font_size=Pt(48), color=ACCENT_BLUE)
-    add_text(slide, "AI-Powered Enterprise Seaport Platform", top=Inches(3.0), font_size=Pt(24), color=WHITE)
-    add_text(slide, "Team SORA\nBuilt 100% with Snowflake CoCo CLI (Cortex Code)\nSnowflake CoCo CLI Hackathon 2026", top=Inches(4.2), font_size=Pt(14), color=MID_GRAY)
+    add_title(slide, "VF Logistics", top=Inches(1.8), font_size=Pt(48), color=ACCENT_BLUE)
+    add_text(slide, "Document to SAP in 10 Seconds", top=Inches(2.8), font_size=Pt(28), color=WHITE)
+    add_text(slide, "Track 1: Workflow Automation\nFrom document chaos to fully automated ERP posting\n\nTeam SORA | Built 100% with Snowflake CoCo CLI\nSnowflake CoCo CLI Hackathon 2026", top=Inches(4.0), font_size=Pt(14), color=MID_GRAY)
     
     # ========== SLIDE 2: Problem ==========
     slide = prs.slides.add_slide(prs.slide_layouts[6])
@@ -154,15 +154,16 @@ def create_presentation():
     # ========== SLIDE 3: Solution ==========
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     set_slide_bg(slide)
-    add_title(slide, "Solution: AI Document Intelligence Pipeline")
-    add_text(slide, "Upload > Auto-Classify > Extract > Cross-Check > Compliance > Fraud Scan\n(Mendix)   (Cortex AI)    (AI_PARSE)   (Rule+AI)      (SQL Rules)     (Pattern)", top=Inches(1.5), font_size=Pt(13), color=ACCENT_BLUE)
+    add_title(slide, "Solution: Automated Workflow Pipeline")
+    add_text(slide, "Upload > Classify > Cross-Check > Compliance > Fraud Scan > SAP Post\n(Mendix)   (Cortex AI)  (Rule+AI)      (SQL Rules)    (Pattern)     (Auto)", top=Inches(1.5), font_size=Pt(13), color=ACCENT_BLUE)
+    add_text(slide, "KEY: IT TAKES ACTION", top=Inches(2.8), font_size=Pt(18), color=ACCENT_GREEN, bold=True)
     add_bullet(slide, [
-        "Zero-hallucination architecture for financial/logistics data",
-        "Hybrid AI: Rules first (free), AI only for edge cases",
-        "Real-time compliance against 138 HS codes + DG classification",
-        "Fraud detection with 5 algorithmic rules (pure SQL, instant)",
+        "Not a dashboard. It classifies, validates, blocks, and posts — automatically",
+        "Zero-hallucination: deterministic procedures for financial data",
+        "Hybrid AI: rules first (free), AI only for edge cases (90% savings)",
+        "End-to-end: document to SAP posting, fully automated",
         "Ultra-low cost: ~$0.001 per document (llama3-8b)",
-    ], top=Inches(3.0))
+    ], top=Inches(3.5))
     
     # ========== SLIDE 4: Architecture ==========
     slide = prs.slides.add_slide(prs.slide_layouts[6])
@@ -279,15 +280,18 @@ def create_presentation():
     # ========== SLIDE 11: Marketplace ==========
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     set_slide_bg(slide)
-    add_title(slide, "Marketplace Integration: Marine Weather")
-    add_text(slide, "Source: Pelmorex Global Weather Data (Snowflake Marketplace)", top=Inches(1.5), font_size=Pt(13), color=ACCENT_BLUE)
-    add_bullet(slide, [
-        "V_PORT_WEATHER_FORECAST view joins weather with PORT_MASTER",
-        "7-day forecast with impact classification",
-        "Weather Impact: Good / Rain Expected / Strong Wind / Heavy Rain",
-        "Proactive alerts for severe weather at destination ports",
-        "Zero-copy data sharing - always fresh, no ETL needed",
-    ], top=Inches(2.5))
+    add_title(slide, "Marketplace: 3 Live Data Sources (Zero ETL)")
+    add_table(slide,
+        ["Source", "Data", "Workflow Use"],
+        [
+            ["Pelmorex Weather", "3,324 port forecasts", "Delay alerts"],
+            ["Public Free - FX", "12 currency pairs (live)", "SAP charge conversion"],
+            ["Public Free - WTO", "VN + 7 partner trade stats", "Route demand"],
+            ["Public Free - ITA", "1,816 restricted entities", "Sanction screening"],
+        ],
+        top=Inches(1.8),
+        col_widths=[Inches(2.8), Inches(3.2), Inches(2.5)])
+    add_text(slide, "All free | Auto-refresh | Zero infrastructure | Zero-copy sharing", top=Inches(4.5), font_size=Pt(12), color=ACCENT_BLUE)
     
     # ========== SLIDE 12: Streamlit ==========
     slide = prs.slides.add_slide(prs.slide_layouts[6])
@@ -317,11 +321,29 @@ def create_presentation():
             ["Authentication", "Key-pair JWT (no password)"],
             ["Audit Trail", "AI_CALL_LOG: every AI call recorded"],
             ["Cost Control", "Token + latency tracking per procedure"],
-            ["Reliability", "Exponential backoff retry (1s, 2s, 4s)"],
-            ["Data Access", "Procedures only - no direct table modification"],
+            ["Agent Data Policy", "Specific lookup OK, bulk export BLOCKED"],
+            ["Anti-Scraping", "Broad queries return summaries only"],
         ],
         top=Inches(1.8),
         col_widths=[Inches(3.0), Inches(5.5)])
+    
+    # ========== SLIDE 14: AI Agent ==========
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    set_slide_bg(slide)
+    add_title(slide, "AI Agent: Professional Logistics Search")
+    add_table(slide,
+        ["Search Type", "Examples"],
+        [
+            ["By Identifier", "B/L number, Container ISO, Booking ref, IMO"],
+            ["By Route", "Port pair (VNSGN>JPYOK), Country, Trade lane"],
+            ["By Party", "Shipper, Consignee, Carrier name"],
+            ["By Time", "ETD/ETA range, Date of issue"],
+            ["By Cargo", "Commodity, HS Code, Container type, Weight"],
+            ["By Status", "Document / Shipment / Compliance status"],
+        ],
+        top=Inches(1.8),
+        col_widths=[Inches(2.5), Inches(6.0)])
+    add_text(slide, "Domain: Incoterms 2020 | IMDG Code | VGM/SOLAS | Demurrage | L/C | Carrier Alliances | B/L Types", top=Inches(5.5), font_size=Pt(11), color=MID_GRAY)
     
     # ========== SLIDE 14: Business Impact ==========
     slide = prs.slides.add_slide(prs.slide_layouts[6])
@@ -375,6 +397,7 @@ def create_presentation():
             ["Phase 2", "Gate Management (3,000 trucks/day)", "Designed"],
             ["Phase 3", "Warehouse & Yard (7 DCs)", "Designed"],
             ["Phase 4", "SAP S/4HANA (No-Copy)", "Simulated"],
+            ["Phase 5", "Multi-Tenant Data Isolation", "Planned"],
         ],
         top=Inches(5.0),
         col_widths=[Inches(1.5), Inches(4.5), Inches(2.0)])

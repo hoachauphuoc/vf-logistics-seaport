@@ -55,15 +55,63 @@ VF_LOGISTICS_DB
 │       └── SP_Get_Pending_SAP_Syncs
 │
 └── MENDIX_APP
-    └── AGENTS (NEW - Automation Layer)
-        ├── Views (1)
-        │   └── V_Cleanup_Statistics
-        └── Stored Procedures (4) + Task (1)
-            ├── sp_LogSAPSync
-            ├── sp_CleanupProcessedFiles
-            ├── sp_PurgeOldSyncLogs
-            ├── sp_ManualCleanup
-            └── daily_garbage_collection_task (TASK)
+    └── AGENTS (AI Document Intelligence + SAP Simulation)
+        ├── Tables (10)
+        │   ├── BILL_OF_LADING (10,010 records)
+        │   ├── PORT_MASTER (70 ports)
+        │   ├── VESSEL_REGISTRY (20 vessels)
+        │   ├── HS_CODE_REFERENCE (138 codes)
+        │   ├── AI_CALL_LOG (audit trail)
+        │   ├── AI_CLASSIFICATION_CACHE (24h TTL)
+        │   ├── SAP_FI_DOCUMENT
+        │   ├── SAP_MM_GOODS_RECEIPT
+        │   ├── SAP_SD_DELIVERY
+        │   └── SAP_CO_COST_ALLOCATION
+        ├── Views (7)
+        │   ├── V_AI_DAILY_COST
+        │   ├── V_AI_USAGE_SUMMARY
+        │   ├── V_PORT_WEATHER_FORECAST (Marketplace: Pelmorex)
+        │   ├── V_EXCHANGE_RATES (Marketplace: Snowflake Public Free - FX)
+        │   ├── V_VIETNAM_TRADE_STATS (Marketplace: WTO)
+        │   ├── V_GLOBAL_TRADE_INDEX (Marketplace: WTO)
+        │   └── V_EXPORT_RESTRICTED_ENTITIES (Marketplace: ITA Sanctions)
+        ├── Stored Procedures (15)
+        │   ├── CLASSIFY_DOCUMENT_TEXT
+        │   ├── CLASSIFY_DOCUMENT
+        │   ├── CHECK_COMPLIANCE
+        │   ├── CROSS_CHECK_DOCUMENTS
+        │   ├── DETECT_DUPLICATES
+        │   ├── ENRICH_DOCUMENT
+        │   ├── VERIFY_CONTAINER_PHOTO
+        │   ├── EXTRACT_FROM_IMAGE
+        │   ├── PARSE_XML_EDI
+        │   ├── AI_COMPLETE_WITH_RETRY
+        │   ├── RUN_ANALYTICS_PIPELINE
+        │   ├── SAP_POST_FI_DOCUMENT
+        │   ├── SAP_POST_GOODS_RECEIPT
+        │   ├── SAP_CREATE_DELIVERY
+        │   └── SAP_ALLOCATE_COSTS
+        ├── Functions (3)
+        │   ├── GET_SHIPMENT_STATS(VARCHAR)
+        │   ├── GET_SHIPMENT_DETAIL(VARCHAR, VARCHAR)
+        │   └── CONVERT_CURRENCY(FLOAT, VARCHAR, VARCHAR)
+        ├── Agent (1)
+        │   └── MENDIX_ASSISTANT
+        │       • Multilingual (auto-detect user language)
+        │       • Professional logistics search patterns
+        │       • Data access policy (anti-scraping)
+        │       • Domain: Incoterms, IMDG, VGM, D&D, L/C
+        ├── Streamlit (1)
+        │   └── VF_LOGISTICS_DASHBOARD (5 pages)
+        ├── Stages (2)
+        │   ├── STREAMLIT_STAGE
+        │   └── BL_DOCUMENTS_STAGE
+        ├── Roles (1)
+        │   └── MENDIX_SERVICE_ROLE (51 grants)
+        └── Marketplace (3 sources)
+            ├── Pelmorex Global Weather Data (port forecasts)
+            ├── Snowflake Public Data Free - FX Rates (12 currencies)
+            └── Snowflake Public Data Free - WTO Trade + ITA Sanctions
 ```
 
 ---

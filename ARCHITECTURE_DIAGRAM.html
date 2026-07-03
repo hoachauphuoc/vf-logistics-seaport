@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VF Logistics — Architecture Diagram</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+body { font-family: 'Segoe UI', sans-serif; background: #0f1724; color: #e0e0e0; margin: 0; padding: 20px; }
+h1 { text-align: center; color: #29B5E8; margin-bottom: 5px; }
+h3 { text-align: center; color: #888; margin-top: 0; font-weight: normal; }
+.container { max-width: 1200px; margin: 0 auto; }
+.mermaid { background: #1a2332; border-radius: 12px; padding: 30px; margin: 20px 0; }
+.section { background: #1a2332; border-radius: 12px; padding: 20px; margin: 20px 0; }
+.section h2 { color: #29B5E8; margin-top: 0; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+th { background: #29B5E8; color: #000; padding: 8px 12px; text-align: left; }
+td { padding: 8px 12px; border-bottom: 1px solid #2a3a4a; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+.badge-ai { background: #7c3aed; color: white; }
+.badge-sql { background: #059669; color: white; }
+.badge-py { background: #2563eb; color: white; }
+.badge-mkt { background: #d97706; color: white; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+.stat { background: #0f1724; border: 1px solid #29B5E8; border-radius: 8px; padding: 15px; text-align: center; }
+.stat-value { font-size: 2em; font-weight: bold; color: #29B5E8; }
+.stat-label { font-size: 0.85em; color: #888; }
+footer { text-align: center; color: #555; margin-top: 30px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🚢 VF Logistics — AI-Powered Enterprise Seaport Platform</h1>
+<h3>Track 1: Workflow Automation | Team SORA | Snowflake CoCo CLI Hackathon 2026</h3>
+
+<div class="stats">
+  <div class="stat"><div class="stat-value">22</div><div class="stat-label">Stored Procedures</div></div>
+  <div class="stat"><div class="stat-value">8</div><div class="stat-label">UDFs</div></div>
+  <div class="stat"><div class="stat-value">20</div><div class="stat-label">Tables</div></div>
+  <div class="stat"><div class="stat-value">7</div><div class="stat-label">Views</div></div>
+  <div class="stat"><div class="stat-value">8</div><div class="stat-label">Tasks</div></div>
+  <div class="stat"><div class="stat-value">10,010</div><div class="stat-label">B/L Records</div></div>
+</div>
+
+<div class="mermaid">
+graph TB
+    subgraph EXTERNAL["🌐 External Systems"]
+        MENDIX["Mendix Low-Code<br/>(Frontend)"]
+        SAP["SAP ERP<br/>(FI/MM/SD/CO)"]
+        MARKETPLACE["Snowflake Marketplace<br/>• FX Rates (12 currencies)<br/>• Weather (Pelmorex)<br/>• Trade Stats (WTO)<br/>• Sanctions (ITA 1,816 entities)"]
+    end
+
+    subgraph SNOWFLAKE["❄️ Snowflake Platform"]
+        subgraph INGEST["📥 Ingestion Layer"]
+            STAGE["Snowflake Stage<br/>(PDF/Images)"]
+            STREAM["Streams<br/>(CDC Detection)"]
+            TASK_DOC["Tasks (5 min)<br/>Auto-process new files"]
+        end
+
+        subgraph AI_ENGINE["🧠 AI Engine (Cortex)"]
+            LLM["Cortex COMPLETE<br/>(llama3-8b)"]
+            PARSE["AI_PARSE_DOCUMENT<br/>(OCR)"]
+            TRANSLATE["Cortex TRANSLATE<br/>(EN/VN/JA)"]
+            SEARCH["Cortex Search<br/>Service"]
+            AGENT["Cortex Agent<br/>(MENDIX_ASSISTANT)"]
+        end
+
+        subgraph WORKFLOW["⚙️ 6-Step Automated Workflow"]
+            STEP1["Step 1: CLASSIFY<br/>17 doc types, MD5 cache"]
+            STEP2["Step 2: CROSS_CHECK<br/>8 SQL rules + AI fallback"]
+            STEP3["Step 3: COMPLIANCE<br/>138 HS codes, DG, VGM"]
+            STEP4["Step 4: FRAUD DETECT<br/>5 rules, pure SQL"]
+            STEP5["Step 5: ENRICH<br/>4 LEFT JOINs, 1 query"]
+            STEP6["Step 6: SAP POST<br/>FI + MM + SD + CO"]
+        end
+
+        subgraph DATA["💾 Data Layer (20 Tables)"]
+            BL["BILL_OF_LADING<br/>(10,010 records)"]
+            REF["Reference Data<br/>• PORT_MASTER (70)<br/>• VESSEL_REGISTRY (20)<br/>• HS_CODE_REF (138)"]
+            SAP_T["SAP Tables<br/>• FI_DOCUMENT<br/>• MM_GOODS_RECEIPT<br/>• SD_DELIVERY<br/>• CO_COST_ALLOC"]
+            AUDIT["Audit & AI<br/>• AI_CALL_LOG<br/>• FRAUD_ALERT<br/>• CHAT_SESSION<br/>• APP_CONFIG"]
+        end
+
+        subgraph AUTOMATION["⏰ Scheduled Tasks (8)"]
+            T1["TASK_REFRESH_ANALYTICS<br/>Every 1 hour"]
+            T2["TASK_FRAUD_SCAN<br/>Every 6 hours"]
+            T3["TASK_FINOPS_MONITOR<br/>Every 4 hours"]
+            T4["TASK_DAILY_CLEANUP<br/>Daily 2AM UTC"]
+        end
+
+        subgraph DASHBOARD["📊 Streamlit Dashboard (6 pages)"]
+            P1["Homepage<br/>KPIs + Charts"]
+            P2["Documents<br/>Bulk Sync/Classify"]
+            P3["Compliance<br/>Scan + Sanctions"]
+            P4["Fraud Detection<br/>Alerts + Resolve"]
+            P5["AI FinOps<br/>Cost Monitoring"]
+            P6["AI Chat<br/>Guardrailed Assistant"]
+        end
+    end
+
+    MENDIX -->|"REST API"| BL
+    MARKETPLACE -->|"Live Data"| DATA
+    STAGE --> STREAM --> TASK_DOC --> STEP1
+
+    STEP1 -->|"Classified"| STEP2
+    STEP2 -->|"Cross-checked"| STEP3
+    STEP3 -->|"Compliant"| STEP4
+    STEP4 -->|"No Fraud"| STEP5
+    STEP5 -->|"Enriched"| STEP6
+    STEP6 -->|"SAP Docs"| SAP
+
+    STEP1 -.->|"AI"| LLM
+    STEP2 -.->|"Fuzzy only"| LLM
+    STEP5 -.->|"Lookups"| REF
+    STEP6 -.->|"Write"| SAP_T
+
+    AI_ENGINE -.-> WORKFLOW
+    AUTOMATION --> DATA
+    DASHBOARD --> DATA
+    P6 -.-> LLM
+    AGENT -.-> SEARCH
+
+    classDef external fill:#2d1b4e,stroke:#7c3aed,color:#e0e0e0
+    classDef snowflake fill:#0c2d48,stroke:#29B5E8,color:#e0e0e0
+    classDef ai fill:#1a0533,stroke:#7c3aed,color:#e0e0e0
+    classDef workflow fill:#0a2e1a,stroke:#059669,color:#e0e0e0
+    classDef data fill:#1c2333,stroke:#3b82f6,color:#e0e0e0
+
+    class MENDIX,SAP,MARKETPLACE external
+    class LLM,PARSE,TRANSLATE,SEARCH,AGENT ai
+    class STEP1,STEP2,STEP3,STEP4,STEP5,STEP6 workflow
+</div>
+
+<div class="section">
+<h2>🔑 Key Design Decisions</h2>
+<table>
+<tr><th>Decision</th><th>Approach</th><th>Impact</th></tr>
+<tr><td>AI Cost Control</td><td>Hybrid: 8 SQL rules run first → AI only for fuzzy matching</td><td>~90% token savings vs full-AI</td></tr>
+<tr><td>Classification Cache</td><td>MD5 hash → 24h TTL → skip duplicate AI calls</td><td>Zero cost for re-processed docs</td></tr>
+<tr><td>Enrichment</td><td>Single 4-JOIN query replaces 5 sequential lookups</td><td>80% latency reduction</td></tr>
+<tr><td>Fraud Detection</td><td>Pure SQL (ISO 6346 check-digit, weight anomaly)</td><td>Zero AI cost, deterministic</td></tr>
+<tr><td>i18n</td><td>Layer 1: Dictionary (instant) + Layer 2: CORTEX.TRANSLATE (dynamic)</td><td>Zero AI cost for UI labels</td></tr>
+<tr><td>Retry Mechanism</td><td>Exponential backoff (1s → 2s → 4s) in AI_COMPLETE_WITH_RETRY</td><td>99.5% success rate</td></tr>
+<tr><td>FinOps</td><td>Every AI call logged → APP_CONFIG threshold → automated alert</td><td>Full cost visibility</td></tr>
+<tr><td>Security</td><td>Key-pair JWT + MENDIX_SERVICE_ROLE + AI_CALL_LOG audit</td><td>Enterprise-grade auth</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>📦 Technology Stack</h2>
+<table>
+<tr><th>Layer</th><th>Technology</th><th>Type</th></tr>
+<tr><td>AI / LLM</td><td>Cortex COMPLETE (llama3-8b), AI_PARSE_DOCUMENT, TRANSLATE</td><td><span class="badge badge-ai">AI</span></td></tr>
+<tr><td>Agent</td><td>Cortex Agent (MENDIX_ASSISTANT) + Cortex Search Service</td><td><span class="badge badge-ai">AI</span></td></tr>
+<tr><td>Backend Logic</td><td>22 Stored Procedures (SQL), 1 Python SP</td><td><span class="badge badge-sql">SQL</span> <span class="badge badge-py">Python</span></td></tr>
+<tr><td>Functions</td><td>8 UDFs (6 SQL + 2 Python with External Access)</td><td><span class="badge badge-sql">SQL</span> <span class="badge badge-py">Python</span></td></tr>
+<tr><td>Automation</td><td>8 Tasks (scheduled + stream-triggered)</td><td><span class="badge badge-sql">SQL</span></td></tr>
+<tr><td>Marketplace</td><td>2 databases: Pelmorex Weather + Snowflake Public Data Free</td><td><span class="badge badge-mkt">MKT</span></td></tr>
+<tr><td>Dashboard</td><td>Streamlit-in-Snowflake (6 pages, i18n EN/VN/JA)</td><td><span class="badge badge-py">Python</span></td></tr>
+<tr><td>ERP</td><td>SAP Integration (FI/MM/SD/CO auto-posting)</td><td><span class="badge badge-sql">SQL</span></td></tr>
+<tr><td>DevOps</td><td>Snow CLI + GitHub Actions (CI/CD)</td><td><span class="badge badge-py">Python</span></td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>🔄 Workflow Pipeline (6 Steps)</h2>
+<div class="mermaid">
+graph LR
+    A["📄 New Document<br/>(PDF/Image/EDI)"] --> B["🤖 Step 1<br/>CLASSIFY<br/><i>17 types, cached</i>"]
+    B --> C["🔍 Step 2<br/>CROSS_CHECK<br/><i>8 rules + AI</i>"]
+    C --> D["✅ Step 3<br/>COMPLIANCE<br/><i>HS, DG, VGM, Route</i>"]
+    D --> E["🚨 Step 4<br/>FRAUD DETECT<br/><i>5 rules, pure SQL</i>"]
+    E --> F["📈 Step 5<br/>ENRICH<br/><i>Port+Vessel+HS</i>"]
+    F --> G["💰 Step 6<br/>SAP POST<br/><i>FI+MM+SD+CO</i>"]
+    G --> H["✅ SAP_POSTED<br/>Complete"]
+
+    style A fill:#1e293b,stroke:#64748b,color:#e2e8f0
+    style B fill:#1e1b4b,stroke:#7c3aed,color:#e2e8f0
+    style C fill:#1e1b4b,stroke:#7c3aed,color:#e2e8f0
+    style D fill:#052e16,stroke:#22c55e,color:#e2e8f0
+    style E fill:#450a0a,stroke:#ef4444,color:#e2e8f0
+    style F fill:#0c4a6e,stroke:#38bdf8,color:#e2e8f0
+    style G fill:#422006,stroke:#f59e0b,color:#e2e8f0
+    style H fill:#052e16,stroke:#22c55e,color:#e2e8f0
+</div>
+</div>
+
+<footer>
+VF Logistics AI-Powered Seaport Platform | Team SORA | Snowflake CoCo CLI Hackathon 2026 APJ | Built entirely with CoCo CLI
+</footer>
+
+</div>
+
+<script>
+mermaid.initialize({ 
+    startOnLoad: true, 
+    theme: 'dark',
+    themeVariables: {
+        primaryColor: '#29B5E8',
+        primaryTextColor: '#e0e0e0',
+        primaryBorderColor: '#29B5E8',
+        lineColor: '#64748b',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a'
+    }
+});
+</script>
+</body>
+</html>

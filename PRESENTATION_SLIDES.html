@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VF Logistics - Hackathon Presentation</title>
+<title>VF Logistics - Track 1: Workflow Automation | Snowflake CoCo CLI Hackathon 2026</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #fff; }
@@ -13,146 +13,154 @@ body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #fff; }
 .slide h1 { font-size: 2.2em; margin-bottom: 20px; color: #29b5e8; }
 .slide h2 { font-size: 1.6em; margin-bottom: 16px; color: #29b5e8; }
 .slide h3 { font-size: 1.2em; margin-bottom: 12px; color: #a8d8ea; }
-.slide p, .slide li { font-size: 1.1em; line-height: 1.7; color: #e0e0e0; }
-.slide ul { margin-left: 24px; margin-bottom: 16px; }
-.slide li { margin-bottom: 8px; }
+.slide p, .slide li { font-size: 1.05em; line-height: 1.7; color: #e0e0e0; }
+.slide ul, .slide ol { margin-left: 24px; margin-bottom: 16px; }
+.slide li { margin-bottom: 6px; }
 .slide code { background: #1e2433; padding: 2px 8px; border-radius: 4px; font-size: 0.9em; color: #7dd3fc; }
-.slide pre { background: #1e2433; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 16px 0; font-size: 0.85em; line-height: 1.5; }
-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
-th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #3a4560; font-size: 0.95em; }
+.slide pre { background: #1e2433; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; font-size: 0.85em; line-height: 1.5; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #3a4560; font-size: 0.9em; }
 th { background: #29b5e8; color: #000; font-weight: 600; }
-tr:hover { background: rgba(41,181,232,0.1); }
-.badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; font-weight: 600; margin-right: 8px; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; margin-right: 6px; }
 .badge-green { background: #22c55e; color: #000; }
 .badge-blue { background: #29b5e8; color: #000; }
 .badge-red { background: #ef4444; color: #fff; }
 .badge-yellow { background: #eab308; color: #000; }
+.badge-purple { background: #7c3aed; color: #fff; }
 .slide-number { position: absolute; bottom: 20px; right: 30px; color: #666; font-size: 0.8em; }
-.kpi-row { display: flex; gap: 20px; margin: 20px 0; }
-.kpi { flex: 1; background: #1e2433; padding: 20px; border-radius: 12px; text-align: center; }
-.kpi .value { font-size: 2em; font-weight: 700; color: #29b5e8; }
-.kpi .label { font-size: 0.85em; color: #999; margin-top: 4px; }
-.speaker-notes { background: #fffde6; color: #333; padding: 16px; border-radius: 8px; 
-                 margin-top: 24px; font-size: 0.85em; border-left: 4px solid #eab308; }
+.kpi-row { display: flex; gap: 16px; margin: 16px 0; flex-wrap: wrap; }
+.kpi { flex: 1; min-width: 120px; background: #1e2433; padding: 16px; border-radius: 12px; text-align: center; }
+.kpi .value { font-size: 1.8em; font-weight: 700; color: #29b5e8; }
+.kpi .label { font-size: 0.8em; color: #999; margin-top: 4px; }
+.speaker-notes { background: #fffde6; color: #333; padding: 12px; border-radius: 8px; 
+                 margin-top: 20px; font-size: 0.8em; border-left: 4px solid #eab308; }
 .speaker-notes strong { color: #92400e; }
+.two-col { display: flex; gap: 20px; }
+.two-col > div { flex: 1; }
 </style>
 </head>
 <body>
 
-<!-- SLIDE 1 -->
+<!-- SLIDE 1: Title -->
 <div class="slide">
-  <div style="text-align:center; padding-top: 80px;">
-    <h1 style="font-size:2.8em;">🚢 VF Logistics</h1>
-    <h2 style="color:#e0e0e0;">AI-Powered Enterprise Seaport Platform</h2>
-    <p style="margin-top:40px; font-size:1.3em;">Built 100% with <span class="badge badge-blue">Snowflake CoCo CLI</span></p>
+  <div style="text-align:center; padding-top: 50px;">
+    <h1 style="font-size:2.8em;">VF Logistics</h1>
+    <h2 style="color:#e0e0e0;">Document to SAP in 10 Seconds</h2>
+    <p style="margin-top:30px; font-size:1.2em; color:#a8d8ea;">Track 1: Workflow Automation</p>
+    <p style="margin-top:16px;">From document chaos to fully automated ERP posting</p>
+    <p style="margin-top:30px;">
+      <span class="badge badge-blue">Snowflake CoCo CLI</span>
+      <span class="badge badge-green">Team SORA</span>
+      <span class="badge badge-purple">APJ Region</span>
+    </p>
     <p style="margin-top:20px; color:#888;">Snowflake CoCo CLI Hackathon 2026</p>
   </div>
-  <div class="speaker-notes"><strong>Speaker Notes:</strong> Good morning, I'm presenting VF Logistics — an AI-powered seaport platform that automates maritime document processing using Snowflake's Cortex AI. Entire backend built with CoCo CLI.</div>
-  <span class="slide-number">1/16</span>
+  <span class="slide-number">1/18</span>
 </div>
 
-<!-- SLIDE 2 -->
+<!-- SLIDE 2: Problem -->
 <div class="slide">
   <h1>The Problem: Maritime Document Chaos</h1>
   <div class="kpi-row">
     <div class="kpi"><div class="value">200+</div><div class="label">Documents per vessel</div></div>
-    <div class="kpi"><div class="value">15-30 min</div><div class="label">Manual classification time</div></div>
-    <div class="kpi"><div class="value">$5K-$50K</div><div class="label">Cost of compliance errors</div></div>
+    <div class="kpi"><div class="value">15-30 min</div><div class="label">Manual classification</div></div>
+    <div class="kpi"><div class="value">$5K-$50K</div><div class="label">Compliance errors cost</div></div>
+    <div class="kpi"><div class="value">5-10 min</div><div class="label">Manual SAP entry</div></div>
   </div>
   <ul>
-    <li>Bills of Lading, Invoices, Certificates, EDI messages — all manual</li>
-    <li>No cross-checking between related documents</li>
+    <li>Bills of Lading, Invoices, Certificates, EDI — all processed manually</li>
+    <li>No cross-checking between related documents (B/L vs Invoice)</li>
     <li>Fraud & duplicates undetected until cargo mismatch at destination</li>
     <li>Compliance errors cause expensive port delays and fines</li>
+    <li>Manual SAP re-keying introduces data entry errors</li>
   </ul>
-  <div class="speaker-notes"><strong>Speaker Notes:</strong> A single vessel generates over 200 documents. Staff manually classify, validate, and cross-check each one. Human errors cost thousands in delays.</div>
-  <span class="slide-number">2/16</span>
+  <span class="slide-number">2/18</span>
 </div>
 
-<!-- SLIDE 3 -->
+<!-- SLIDE 3: Solution -->
 <div class="slide">
-  <h1>Solution: AI Document Intelligence Pipeline</h1>
+  <h1>Solution: 6-Step Automated Pipeline</h1>
   <pre style="font-size:1em; text-align:center; color:#7dd3fc;">
-Upload → Auto-Classify → Extract → Cross-Check → Compliance → Fraud Scan
-(Mendix)  (Cortex AI)   (AI_PARSE)  (Rule+AI)    (SQL Rules)   (Pattern)
+Upload → Classify → Cross-Check → Compliance → Fraud → SAP Post
+(Mendix)  (Cortex)   (Rule+AI)     (SQL Rules)  (SQL)    (Auto)
   </pre>
+  <h3 style="color:#22c55e; margin-top:16px;">KEY: IT TAKES ACTION</h3>
   <ul>
-    <li><strong>Zero-hallucination</strong> for financial/logistics data (stored procedures)</li>
-    <li><strong>Hybrid AI</strong>: Rules first (free), AI only for edge cases</li>
-    <li><strong>Real-time compliance</strong> against 138 HS codes + DG classification</li>
-    <li><strong>Fraud detection</strong> with 5 algorithmic rules (pure SQL, instant)</li>
-    <li><strong>Ultra-low cost</strong>: ~$0.001 per document (llama3-8b)</li>
+    <li>Not a dashboard. <strong>It classifies, validates, blocks, alerts, and posts.</strong></li>
+    <li><strong>Hybrid AI</strong> — SQL rules first (free), AI only for edge cases (90% token savings)</li>
+    <li><strong>Zero hallucination</strong> — deterministic procedures for financial data</li>
+    <li><strong>Ultra-low cost</strong> — ~$0.001 per document (llama3-8b)</li>
+    <li><strong>< 10 seconds</strong> — end-to-end, fully automated</li>
   </ul>
-  <div class="speaker-notes"><strong>Speaker Notes:</strong> Our key insight: deterministic SQL procedures for data access (zero hallucination), AI reserved for classification and fuzzy matching only.</div>
-  <span class="slide-number">3/16</span>
+  <span class="slide-number">3/18</span>
 </div>
 
-<!-- SLIDE 4 -->
+<!-- SLIDE 4: Architecture -->
 <div class="slide">
-  <h1>Architecture</h1>
+  <h1>Architecture: Two-Tier</h1>
   <pre>
-┌──────────────┐     JDBC/JWT     ┌───────────────────────────┐
-│   MENDIX     │ ◄──────────────► │       SNOWFLAKE           │
-│  Low-Code UI │                   │                           │
-│  • Upload    │                   │  Cortex AI Functions      │
-│  • Workflow  │                   │  11 Stored Procedures     │
-│  • Alerts    │                   │  228+ Reference Records   │
-│              │                   │  Streamlit Dashboard      │
-└──────────────┘                   │  Marketplace Weather      │
-                                   │  Snowpark Pipeline        │
-                                   └───────────────────────────┘
+MENDIX (Front-Office)               SNOWFLAKE (Back-Office / Brain)
+─────────────────────               ──────────────────────────────────
+• B/L Upload UI                     • 22 Stored Procedures + 3 Batch SPs
+• HITL Approval                     • 8 UDFs (SQL + Python)
+• Alert Notifications               • Cortex AI (llama3-8b, mistral-large2)
+• SAP Confirmation                  • 20 Tables + 7 Views + 10,010 B/L
+                                    • 8 Scheduled Tasks (automation)
+        ↕ REST API + JWT            • Streamlit Dashboard (6 pages, i18n)
+                                    • Cortex Agent + Search Service
+                                    • 2 Marketplace Databases (live)
+                                    • Semantic Model (Cortex Analyst)
   </pre>
-  <ul>
-    <li><span class="badge badge-blue">Mendix</span> Low-code frontend (UI, workflow, async)</li>
-    <li><span class="badge badge-green">Snowflake</span> AI engine + data platform (ALL logic here)</li>
-    <li><span class="badge badge-yellow">CoCo CLI</span> Development tool for all Snowflake objects</li>
-  </ul>
-  <span class="slide-number">4/16</span>
+  <p><span class="badge badge-blue">Zero middleware</span> <span class="badge badge-green">Zero external APIs</span> <span class="badge badge-purple">100% in Snowflake</span></p>
+  <span class="slide-number">4/18</span>
 </div>
 
-<!-- SLIDE 5 -->
+<!-- SLIDE 5: Built with CoCo -->
 <div class="slide">
-  <h1>Built 100% with CoCo CLI</h1>
+  <h1>Built 100% with CoCo CLI / Desktop</h1>
   <table>
-    <tr><th>Task</th><th>CoCo CLI Feature</th></tr>
-    <tr><td>10+ stored procedures</td><td>SQL generation + execution</td></tr>
-    <tr><td>Semantic model (YAML)</td><td>File creation + validation</td></tr>
-    <tr><td>Streamlit dashboard</td><td>File management + deployment</td></tr>
-    <tr><td>Mock data (10 shipments)</td><td>SQL insert generation</td></tr>
-    <tr><td>Debug AI responses</td><td>Interactive SQL testing</td></tr>
-    <tr><td>Marketplace integration</td><td>Database exploration + JOIN design</td></tr>
-    <tr><td>Reference data (228 records)</td><td>Bulk SQL generation</td></tr>
-    <tr><td>Snowpark pipeline</td><td>Python code generation + deployment</td></tr>
+    <tr><th>What We Built</th><th>Quantity</th></tr>
+    <tr><td>Stored Procedures (retry, cache, audit)</td><td>22 + 3 batch</td></tr>
+    <tr><td>UDFs & Table Functions</td><td>8</td></tr>
+    <tr><td>Tables + Views</td><td>20 + 7</td></tr>
+    <tr><td>Scheduled Tasks</td><td>8 (hourly/4h/6h/daily)</td></tr>
+    <tr><td>B/L test data</td><td>10,010 records</td></tr>
+    <tr><td>SAP integration (4 modules)</td><td>FI, MM, SD, CO</td></tr>
+    <tr><td>Streamlit dashboard (multi-language)</td><td>6 pages + i18n (EN/VN/JA)</td></tr>
+    <tr><td>Cortex Agent + Search Service</td><td>MENDIX_ASSISTANT</td></tr>
+    <tr><td>Semantic Model (Cortex Analyst)</td><td>YAML + verified queries</td></tr>
+    <tr><td>Marketplace integrations</td><td>2 databases, 4 procedures</td></tr>
+    <tr><td>CI/CD pipeline</td><td>3 GitHub Actions</td></tr>
   </table>
-  <div class="speaker-notes"><strong>Speaker Notes:</strong> CoCo CLI dramatically reduced development time — generated complex procedures with retry logic, created test data, debugged AI parsing issues, and deployed the dashboard.</div>
-  <span class="slide-number">5/16</span>
+  <p style="margin-top:12px; color:#a8d8ea;"><em>"From raw idea to production — entirely through conversational AI development."</em></p>
+  <span class="slide-number">5/18</span>
 </div>
 
-<!-- SLIDE 6 -->
+<!-- SLIDE 6: Classification -->
 <div class="slide">
-  <h1>Feature 1: Auto-Classification</h1>
-  <h3>17 Maritime Document Types</h3>
+  <h1>Step 1: Auto-Classification</h1>
+  <h3>17 Document Types, 95%+ Confidence</h3>
   <pre>CALL CLASSIFY_DOCUMENT_TEXT('BILL OF LADING No. MAEU123...');
-→ {document_type: "BILL_OF_LADING", confidence: 0.95}</pre>
+→ {document_type: "BILL_OF_LADING", confidence: 0.95, cached: false}</pre>
   <ul>
-    <li>B/L, Invoice, Packing List, Certificate of Origin, DG Declaration, Manifest, EDI, +10 more</li>
-    <li><strong>Confidence scoring</strong> — human-in-the-loop for &lt;85%</li>
-    <li><strong>Retry mechanism</strong> — exponential backoff (1s, 2s, 4s)</li>
-    <li>All calls logged to <code>AI_CALL_LOG</code> for audit + cost tracking</li>
+    <li><strong>MD5 Classification Cache</strong> — 24h TTL, zero cost for re-processed docs</li>
+    <li>Confidence < 85% → human review queue (HITL)</li>
+    <li>Retry with exponential backoff (1s, 2s, 4s)</li>
+    <li>All calls → <code>AI_CALL_LOG</code> (audit + cost tracking)</li>
   </ul>
-  <div class="speaker-notes"><strong>Speaker Notes:</strong> Classification is step one. Documents below 85% confidence get flagged for human review. Retry mechanism ensures reliability under load.</div>
-  <span class="slide-number">6/16</span>
+  <p><strong>ACTION:</strong> Routes document to correct processing pipeline.</p>
+  <span class="slide-number">6/18</span>
 </div>
 
-<!-- SLIDE 7 -->
+<!-- SLIDE 7: Cross-Check -->
 <div class="slide">
-  <h1>Feature 2: Hybrid Cross-Check</h1>
-  <h3>Rule-Based + AI (saves 90% tokens)</h3>
-  <div style="display:flex; gap:20px;">
-    <div style="flex:1;">
-      <h3 style="color:#22c55e;">8 SQL Rules (FREE)</h3>
+  <h1>Step 2: Hybrid Cross-Check</h1>
+  <h3>8 SQL Rules (FREE) + AI Fuzzy Match (edge cases only)</h3>
+  <div class="two-col">
+    <div>
+      <h3 style="color:#22c55e;">8 Deterministic Rules ($0)</h3>
       <ul>
-        <li>Weight discrepancy (&gt;2%)</li>
+        <li>Weight discrepancy (>2%)</li>
         <li>Package count mismatch</li>
         <li>Vessel name mismatch</li>
         <li>Voyage number mismatch</li>
@@ -162,182 +170,227 @@ Upload → Auto-Classify → Extract → Cross-Check → Compliance → Fraud Sc
         <li>Container number mismatch</li>
       </ul>
     </div>
-    <div style="flex:1;">
-      <h3 style="color:#eab308;">AI Fuzzy Match (edge cases)</h3>
+    <div>
+      <h3 style="color:#eab308;">AI (only when needed)</h3>
       <ul>
         <li>"VN SEAFOOD JSC" = "VIETNAM SEAFOOD JOINT STOCK COMPANY" ✓</li>
-        <li>Only invoked when party names differ</li>
-        <li>~90% cost reduction vs full-AI</li>
+        <li>Only for party name matching</li>
+        <li><strong>~90% token savings</strong> vs full-AI</li>
       </ul>
     </div>
   </div>
-  <div class="speaker-notes"><strong>Speaker Notes:</strong> Most innovative feature. 8 SQL rules run first at zero cost. AI only for party name matching — requires semantic understanding of abbreviations.</div>
-  <span class="slide-number">7/16</span>
+  <span class="slide-number">7/18</span>
 </div>
 
-<!-- SLIDE 8 -->
+<!-- SLIDE 8: Compliance -->
 <div class="slide">
-  <h1>Feature 3: Compliance Engine</h1>
-  <pre>CALL CHECK_COMPLIANCE(1);
-→ HS Code validity, DG classification, VGM, route docs</pre>
+  <h1>Step 3: Compliance Engine</h1>
+  <h3>138 HS Codes + Route Requirements — 100% Deterministic</h3>
   <table>
-    <tr><th>Check</th><th>Reference Data</th><th>Result</th></tr>
-    <tr><td>HS Code valid?</td><td>138 codes (97 chapters + 4-digit)</td><td>PASS/FAIL</td></tr>
-    <tr><td>Dangerous Goods?</td><td>DG flag on HS_CODE_REFERENCE</td><td>WARNING</td></tr>
-    <tr><td>VGM present?</td><td>SOLAS requirement</td><td>PASS/FAIL</td></tr>
-    <tr><td>Route-specific docs?</td><td>EU→CoO, US→ISF</td><td>WARNING</td></tr>
+    <tr><th>Check</th><th>Reference</th><th>Result</th></tr>
+    <tr><td>HS Code valid?</td><td>138 codes</td><td>PASS/FAIL</td></tr>
+    <tr><td>Dangerous Goods?</td><td>DG flag per HS code</td><td>CRITICAL → block</td></tr>
+    <tr><td>VGM/SOLAS?</td><td>Weight verification</td><td>PASS/FAIL</td></tr>
+    <tr><td>Route docs (EU→CoO, US→ISF, JP→NACCS)?</td><td>Country rules</td><td>WARNING</td></tr>
   </table>
-  <p style="margin-top:16px;"><span class="badge badge-green">100% Deterministic</span> No AI hallucination — pure SQL against reference tables</p>
-  <span class="slide-number">8/16</span>
+  <p style="margin-top:12px;"><span class="badge badge-green">Zero AI hallucination</span> Pure SQL against reference tables.</p>
+  <span class="slide-number">8/18</span>
 </div>
 
-<!-- SLIDE 9 -->
+<!-- SLIDE 9: Fraud -->
 <div class="slide">
-  <h1>Feature 4: Fraud Detection</h1>
-  <h3>5-Rule Anomaly Detection (Pure SQL, Instant)</h3>
+  <h1>Step 4: Fraud Detection (Pure SQL)</h1>
+  <h3>5 Rules, Zero AI Cost, Instant Execution</h3>
   <table>
     <tr><th>Rule</th><th>Description</th><th>Severity</th></tr>
     <tr><td>DUPLICATE_BL</td><td>Same B/L number on multiple documents</td><td><span class="badge badge-red">HIGH</span></td></tr>
     <tr><td>DUPLICATE_CONTAINER</td><td>Same container on different B/Ls</td><td><span class="badge badge-red">HIGH</span></td></tr>
-    <tr><td>INVALID_CONTAINER</td><td>Fails ISO 6346 check-digit</td><td><span class="badge badge-yellow">MEDIUM</span></td></tr>
-    <tr><td>WEIGHT_ANOMALY</td><td>Weight/volume ratio abnormal</td><td><span class="badge badge-yellow">MEDIUM</span></td></tr>
+    <tr><td>INVALID_CONTAINER</td><td>Fails ISO 6346 check-digit validation</td><td><span class="badge badge-yellow">MEDIUM</span></td></tr>
+    <tr><td>WEIGHT_ANOMALY</td><td>Weight/volume ratio abnormal for commodity</td><td><span class="badge badge-yellow">MEDIUM</span></td></tr>
     <tr><td>POSSIBLE_COPY</td><td>Same shipper+consignee+weight+date</td><td><span class="badge badge-red">HIGH</span></td></tr>
   </table>
-  <p>All rules are pure SQL — no AI cost, instant execution, full audit trail</p>
-  <span class="slide-number">9/16</span>
+  <p><strong>HIGH → blocks processing + immediate alert.</strong> Scheduled scan every 6 hours.</p>
+  <span class="slide-number">9/18</span>
 </div>
 
-<!-- SLIDE 10 -->
+<!-- SLIDE 10: Marketplace -->
 <div class="slide">
-  <h1>Feature 5: Container Photo Verification</h1>
-  <pre>CALL VERIFY_CONTAINER_PHOTO('@stage/photo.jpg', 'MAEU1234567');
-→ {container_match: true, seal_match: true, condition: "good"}</pre>
-  <ul>
-    <li><strong>AI_PARSE_DOCUMENT</strong> for OCR — extracts container number from photo</li>
-    <li>Cross-reference against B/L container number</li>
-    <li>Seal number integrity verification</li>
-    <li>Container physical condition assessment</li>
-    <li>Used at gate entry — trucks get verified before entering port</li>
-  </ul>
-  <span class="slide-number">10/16</span>
+  <h1>Step 5: Marketplace Integration</h1>
+  <h3>2 Databases, 4 Procedures, Live Data — Zero ETL</h3>
+  <table>
+    <tr><th>Source</th><th>Procedure</th><th>Use Case</th></tr>
+    <tr><td>Pelmorex Weather</td><td><code>GET_PORT_WEATHER('JPTYO')</code></td><td>Vessel delay alerts</td></tr>
+    <tr><td>Public Free - FX</td><td><code>GET_EXCHANGE_RATE('USD','VND',1850)</code></td><td>SAP charge conversion</td></tr>
+    <tr><td>Public Free - Trade</td><td><code>GET_TRADE_STATS('Vietnam')</code></td><td>Route demand forecast</td></tr>
+    <tr><td>Public Free - ITA</td><td><code>SCREEN_SANCTIONS('Nordic')</code></td><td>1,816 restricted entities</td></tr>
+  </table>
+  <p><span class="badge badge-blue">Snowflake Marketplace</span> Zero-copy, always fresh, no infrastructure needed.</p>
+  <span class="slide-number">10/18</span>
 </div>
 
-<!-- SLIDE 11 -->
+<!-- SLIDE 11: SAP -->
 <div class="slide">
-  <h1>Marketplace Integration: Marine Weather</h1>
-  <h3>Pelmorex Global Weather Data → Port Forecast</h3>
-  <pre>SELECT PORT_NAME, FORECAST_DATE, TEMP_CELSIUS, WIND_SPEED_KMH, WEATHER_IMPACT
-FROM V_PORT_WEATHER_FORECAST
-WHERE WEATHER_IMPACT = 'Strong Wind - Caution';</pre>
-  <ul>
-    <li>Proactive alerts for severe weather at destination ports</li>
-    <li>Joined with PORT_MASTER (70 ports worldwide)</li>
-    <li>7-day forecast with impact classification</li>
-    <li>Helps logistics planners adjust ETAs and resources</li>
-  </ul>
-  <p><span class="badge badge-blue">Snowflake Marketplace</span> Zero-copy data sharing, always fresh</p>
-  <span class="slide-number">11/16</span>
+  <h1>Step 6: SAP Auto-Posting (4 Modules)</h1>
+  <pre>
+B/L passes all checks → Snowflake triggers:
+  ├── FI: Vendor Invoice (Debit 4210000 / Credit AP 2100000)
+  ├── MM: Goods Receipt (MIGO 101 → Plant VF01, Storage WH01)
+  ├── SD: Delivery + Billing (customer invoice)
+  └── CO: Cost Allocation (Ocean, THC, Doc Fee, BAF, Insurance)
+  </pre>
+  <div class="two-col" style="margin-top:16px;">
+    <div style="background:#1e2433; padding:16px; border-radius:8px;">
+      <h3 style="color:#22c55e;">Demo (Current)</h3>
+      <p>SAP tables simulated in Snowflake<br>4 procedures + 5 SAP tables<br>Batch SP: BATCH_SAP_SYNC(500)</p>
+    </div>
+    <div style="background:#1e2433; padding:16px; border-radius:8px;">
+      <h3 style="color:#29b5e8;">Production (Future)</h3>
+      <p>SAP No-Copy integration<br>SAP Datasphere federation<br>Zero ETL — query SAP directly</p>
+    </div>
+  </div>
+  <span class="slide-number">11/18</span>
 </div>
 
-<!-- SLIDE 12 -->
+<!-- SLIDE 12: Streamlit -->
 <div class="slide">
-  <h1>Analytics: Streamlit-in-Snowflake</h1>
-  <h3>5-Page Dashboard (Native Deployment)</h3>
+  <h1>Streamlit Dashboard (6 Pages, i18n)</h1>
   <div class="kpi-row">
-    <div class="kpi"><div class="value">Overview</div><div class="label">KPIs, routes, shipments</div></div>
-    <div class="kpi"><div class="value">Documents</div><div class="label">Filter, search, enrich</div></div>
-    <div class="kpi"><div class="value">Compliance</div><div class="label">Run checks, DG alerts</div></div>
-    <div class="kpi"><div class="value">Fraud</div><div class="label">Scan, severity alerts</div></div>
-    <div class="kpi"><div class="value">AI Analytics</div><div class="label">Tokens, cost, latency</div></div>
+    <div class="kpi"><div class="value">Home</div><div class="label">KPIs + Charts</div></div>
+    <div class="kpi"><div class="value">Docs</div><div class="label">Bulk Sync/Classify</div></div>
+    <div class="kpi"><div class="value">Comply</div><div class="label">Scan + Sanctions</div></div>
+    <div class="kpi"><div class="value">Fraud</div><div class="label">Alerts + Resolve</div></div>
+    <div class="kpi"><div class="value">FinOps</div><div class="label">Cost Monitoring</div></div>
+    <div class="kpi"><div class="value">AI Chat</div><div class="label">Data-Grounded</div></div>
   </div>
   <ul>
-    <li>No external hosting — runs natively in Snowflake</li>
-    <li>Real-time data from operational tables</li>
-    <li>AI cost monitoring — essential for enterprise budget control</li>
+    <li><strong>Multi-language:</strong> EN / VN / JA (dictionary i18n, $0 cost)</li>
+    <li><strong>Actionable:</strong> Bulk SAP sync, AI classification, resolve alerts</li>
+    <li><strong>FinOps:</strong> Real-time cost alerts vs APP_CONFIG threshold</li>
+    <li><strong>AI Chat:</strong> Cortex Analyst generates SQL → answers from live database</li>
+    <li><strong>Settings:</strong> Runtime model/threshold/cache configuration</li>
   </ul>
-  <span class="slide-number">12/16</span>
+  <span class="slide-number">12/18</span>
 </div>
 
-<!-- SLIDE 13 -->
+<!-- SLIDE 13: AI Chat Cortex Analyst -->
+<div class="slide">
+  <h1>AI Chat: Data-Grounded (Not Hallucinated)</h1>
+  <h3>Two-Path Architecture — Answers from Live Database</h3>
+  <pre>
+User: "How many shipments are pending?"
+
+Path 1 (Data): AI generates SQL → Executes → Returns real number
+  → "📊 PENDING_SHIPMENTS: 3,847" (from BILL_OF_LADING table)
+
+Path 2 (Fallback): General logistics knowledge via CORTEX.COMPLETE
+  → "🤖 Based on typical operations..." (when SQL fails)
+  </pre>
+  <ul>
+    <li><strong>Semantic Model:</strong> 3 tables, 8 dimensions, 8 measures, verified queries</li>
+    <li><strong>Verifiable:</strong> Judges can see the SQL query that produced the number</li>
+    <li><strong>Multilingual:</strong> EN / VN / JA auto-detect</li>
+    <li><strong>Guardrails:</strong> Logistics-only topics, no schema exposure</li>
+  </ul>
+  <span class="slide-number">13/18</span>
+</div>
+
+<!-- SLIDE 14: Scheduled Tasks -->
+<div class="slide">
+  <h1>Scheduled Automation (8 Tasks)</h1>
+  <h3>Zero Human Intervention — System Self-Maintains</h3>
+  <table>
+    <tr><th>Task</th><th>Schedule</th><th>Purpose</th></tr>
+    <tr><td>TASK_REFRESH_ANALYTICS</td><td>Hourly</td><td>Recalculate KPI aggregations</td></tr>
+    <tr><td>TASK_FRAUD_SCAN</td><td>Every 6h</td><td>Full-database fraud detection</td></tr>
+    <tr><td>TASK_FINOPS_MONITOR</td><td>Every 4h</td><td>Auto-alert if cost exceeds threshold</td></tr>
+    <tr><td>TASK_DAILY_CLEANUP</td><td>2AM UTC</td><td>Purge expired cache + old alerts</td></tr>
+    <tr><td>SYNC_LOGISTICS_INBOX</td><td>5 min (stream)</td><td>Detect new files on stage</td></tr>
+    <tr><td>PROCESS_DOCUMENTS</td><td>Predecessor</td><td>Auto-classify new docs</td></tr>
+    <tr><td>BATCH_EXTRACT</td><td>Predecessor</td><td>Extract structured data</td></tr>
+    <tr><td>PROCESS_NEW_BL</td><td>5 min (stream)</td><td>PDF → Search index</td></tr>
+  </table>
+  <p><span class="badge badge-green">Production-grade</span> Self-healing, self-monitoring, zero maintenance.</p>
+  <span class="slide-number">14/18</span>
+</div>
+
+<!-- SLIDE 15: Security -->
 <div class="slide">
   <h1>Security & Governance</h1>
   <table>
     <tr><th>Feature</th><th>Implementation</th></tr>
-    <tr><td>Least-Privilege Role</td><td>MENDIX_SERVICE_ROLE: 51 grants, SELECT-only on ref tables</td></tr>
-    <tr><td>Authentication</td><td>Key-pair JWT (no password transmission)</td></tr>
+    <tr><td>Least-Privilege</td><td>MENDIX_SERVICE_ROLE (SELECT + EXECUTE only)</td></tr>
+    <tr><td>Authentication</td><td>Key-pair JWT (.p8, zero password)</td></tr>
     <tr><td>Audit Trail</td><td>AI_CALL_LOG: every AI call recorded</td></tr>
-    <tr><td>Cost Control</td><td>Token + latency tracking per procedure</td></tr>
-    <tr><td>Reliability</td><td>Exponential backoff retry (1s, 2s, 4s)</td></tr>
-    <tr><td>Data Access</td><td>Procedures only — no direct table modification</td></tr>
+    <tr><td>Cost Control</td><td>APP_CONFIG threshold + automated FinOps alerts</td></tr>
+    <tr><td>SQL Injection</td><td>Input sanitization on all user-facing queries</td></tr>
+    <tr><td>Batch Safety</td><td>Server-side SPs — no client-side N+1 loops</td></tr>
+    <tr><td>Data Perimeter</td><td>100% in Snowflake — no external AI data movement</td></tr>
+    <tr><td>Agent Policy</td><td>Anti-scraping, PII protection, bulk export blocked</td></tr>
   </table>
-  <span class="slide-number">13/16</span>
+  <p style="margin-top:12px;"><strong>Test Coverage: 97.6%</strong> (42 tests, 8 categories)</p>
+  <span class="slide-number">15/18</span>
 </div>
 
-<!-- SLIDE 14 -->
+<!-- SLIDE 16: Business Impact -->
 <div class="slide">
   <h1>Business Impact</h1>
   <table>
     <tr><th>Metric</th><th>Before</th><th>After</th><th>Improvement</th></tr>
-    <tr><td>Classification time</td><td>15-30 min</td><td>2-3 sec</td><td><span class="badge badge-green">99.7% faster</span></td></tr>
-    <tr><td>Compliance coverage</td><td>60% manual</td><td>100% auto</td><td><span class="badge badge-green">100%</span></td></tr>
-    <tr><td>Cross-check accuracy</td><td>Error-prone</td><td>Rule+AI hybrid</td><td><span class="badge badge-green">Zero missed</span></td></tr>
-    <tr><td>Fraud detection</td><td>Reactive</td><td>Proactive (real-time)</td><td><span class="badge badge-green">Early detection</span></td></tr>
-    <tr><td>AI cost per document</td><td>—</td><td>~$0.001</td><td><span class="badge badge-green">Ultra-low</span></td></tr>
+    <tr><td>Document processing</td><td>15-30 min</td><td>< 10 sec</td><td><span class="badge badge-green">99.7% faster</span></td></tr>
+    <tr><td>Compliance coverage</td><td>60% sampled</td><td>100% every doc</td><td><span class="badge badge-green">Full coverage</span></td></tr>
+    <tr><td>SAP posting</td><td>5-10 min manual</td><td>< 1 sec auto</td><td><span class="badge badge-green">100% automated</span></td></tr>
+    <tr><td>Fraud detection</td><td>Reactive</td><td>Proactive (6h scan)</td><td><span class="badge badge-green">Early detection</span></td></tr>
+    <tr><td>AI cost per doc</td><td>—</td><td>~$0.001</td><td><span class="badge badge-green">Ultra-low</span></td></tr>
+    <tr><td>Language support</td><td>English only</td><td>EN/VN/JA</td><td><span class="badge badge-green">APJ ready</span></td></tr>
+    <tr><td>Monitoring</td><td>Manual checks</td><td>8 automated tasks</td><td><span class="badge badge-green">Self-maintaining</span></td></tr>
   </table>
-  <span class="slide-number">14/16</span>
+  <span class="slide-number">16/18</span>
 </div>
 
-<!-- SLIDE 15: SAP Integration -->
-<div class="slide">
-  <h1>SAP S/4HANA Integration (Phase 4)</h1>
-  <h3>Document → Automatic SAP Postings</h3>
-  <pre style="font-size:0.95em;">
-B/L Approved → Snowflake Procedures create:
-  ├── FI: Vendor Invoice (Debit Freight 4210000 / Credit AP 2100000)
-  ├── MM: Goods Receipt (MIGO 101 → Plant VF01, Storage WH01)
-  ├── SD: Delivery + Billing (customer invoice generated)
-  └── CO: Cost Allocation (per element: Ocean, THC, Doc Fee, BAF)
-  </pre>
-  <div style="display:flex; gap:20px; margin-top:16px;">
-    <div style="flex:1; background:#1e2433; padding:16px; border-radius:8px;">
-      <h3 style="color:#22c55e;">Current (Demo)</h3>
-      <p>SAP tables simulated in Snowflake</p>
-      <p>4 tables + 4 stored procedures</p>
-      <p>Full data: 10 FI docs, 9 GR, 9 deliveries</p>
-    </div>
-    <div style="flex:1; background:#1e2433; padding:16px; border-radius:8px;">
-      <h3 style="color:#29b5e8;">Future (Production)</h3>
-      <p><strong>SAP No-Copy</strong> integration</p>
-      <p>SAP Datasphere ↔ Snowflake federation</p>
-      <p>Zero ETL — query SAP data directly</p>
-    </div>
-  </div>
-  <div class="speaker-notes"><strong>Speaker Notes:</strong> Phase 4 shows end-to-end integration. B/L approval triggers FI/MM/SD/CO postings automatically. In production, SAP No-Copy (Datasphere) eliminates ETL entirely.</div>
-  <span class="slide-number">15/16</span>
-</div>
-
-<!-- SLIDE 16: Demo & Roadmap -->
+<!-- SLIDE 17: Demo & Roadmap -->
 <div class="slide">
   <h1>Live Demo & Roadmap</h1>
-  <h3>Demo Flow (6 steps)</h3>
-  <ol style="margin-left:24px; margin-bottom:20px;">
+  <h3>Demo Flow (< 30 seconds)</h3>
+  <ol style="margin-left:24px; margin-bottom:16px;">
     <li>Upload document → Auto-classify (B/L, 95% confidence)</li>
-    <li>Cross-check B/L vs Invoice → Weight discrepancy found</li>
-    <li>Compliance scan → DG flagged, VGM verified</li>
-    <li>Fraud scan → Duplicate container detected</li>
-    <li>Weather check → Strong wind at destination port</li>
+    <li>Cross-check vs Invoice → Weight discrepancy flagged</li>
+    <li>Compliance → DG flagged, VGM verified</li>
+    <li>Fraud scan → ISO 6346 check-digit validated</li>
+    <li>Marketplace → Weather + FX + Sanctions</li>
     <li><strong>SAP posting → FI + MM + SD + CO created automatically</strong></li>
   </ol>
-  <h3>4-Phase Roadmap</h3>
+  <h3>Roadmap</h3>
   <table>
     <tr><th>Phase</th><th>Scope</th><th>Status</th></tr>
-    <tr><td>Phase 1</td><td>AI Document Intelligence</td><td><span class="badge badge-green">LIVE</span></td></tr>
+    <tr><td>Phase 1</td><td>AI Document Workflow Automation</td><td><span class="badge badge-green">LIVE</span></td></tr>
     <tr><td>Phase 2</td><td>Gate Management (3,000 trucks/day)</td><td>Designed</td></tr>
     <tr><td>Phase 3</td><td>Warehouse & Yard (7 DCs)</td><td>Designed</td></tr>
-    <tr><td>Phase 4</td><td>SAP S/4HANA (No-Copy)</td><td><span class="badge badge-blue">Simulated</span></td></tr>
+    <tr><td>Phase 4</td><td>SAP No-Copy (Datasphere)</td><td><span class="badge badge-blue">Simulated</span></td></tr>
+    <tr><td>Phase 5</td><td>Multi-Tenant (Row Access Policy)</td><td>Planned</td></tr>
   </table>
-  <div class="speaker-notes"><strong>Speaker Notes:</strong> Let me demonstrate the full 6-step flow including SAP integration. This platform covers the entire port logistics lifecycle from document arrival to ERP posting.</div>
-  <span class="slide-number">16/16</span>
+  <span class="slide-number">17/18</span>
+</div>
+
+<!-- SLIDE 18: Team -->
+<div class="slide">
+  <div style="text-align:center; padding-top:60px;">
+    <h1>Team SORA</h1>
+    <p style="margin-top:30px; font-size:1.2em;">Track 1: Workflow Automation | APJ Region</p>
+    <table style="max-width:600px; margin:30px auto;">
+      <tr><th>Member</th><th>Role</th></tr>
+      <tr><td>Chau Phuoc Hoa</td><td>Team Lead / Backend Developer</td></tr>
+      <tr><td>Nguyen Quoc Cuong</td><td>Frontend Developer</td></tr>
+    </table>
+    <p style="margin-top:30px; font-size:1.3em; color:#29b5e8; font-weight:bold;">"From document chaos to SAP posting in 10 seconds"</p>
+    <p style="margin-top:20px;">
+      <span class="badge badge-blue">Snowflake CoCo CLI</span>
+      <span class="badge badge-green">Cortex AI</span>
+      <span class="badge badge-purple">Marketplace</span>
+      <span class="badge badge-yellow">Streamlit</span>
+    </p>
+    <p style="margin-top:20px; color:#888;">Built 100% with Snowflake CoCo CLI / CoCo Desktop</p>
+  </div>
+  <span class="slide-number">18/18</span>
 </div>
 
 </body>

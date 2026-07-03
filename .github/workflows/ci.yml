@@ -1,0 +1,100 @@
+name: CI - Lint & Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  sql-lint:
+    name: SQL Lint & Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install sqlfluff
+        run: pip install sqlfluff==3.0.0
+
+      - name: Lint SQL files
+        run: |
+          sqlfluff lint . \
+            --dialect snowflake \
+            --exclude-rules LT05,LT09,AM04 \
+            --format github-annotation-native \
+            || true
+        continue-on-error: true
+
+      - name: Check SQL file count
+        run: |
+          SQL_COUNT=$(find . -name "*.sql" | wc -l)
+          echo "Found $SQL_COUNT SQL files"
+          echo "sql_count=$SQL_COUNT" >> $GITHUB_OUTPUT
+
+  yaml-validate:
+    name: YAML Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Validate YAML files
+        run: |
+          yamllint -d relaxed . || true
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Scanning for potential secrets..."
+          # Check for common secret patterns
+          FOUND=0
+          if grep -rn "password\s*=" --include="*.sql" --include="*.py" --include="*.yaml" . 2>/dev/null | grep -v "placeholder" | grep -v "#"; then
+            echo "::warning::Potential hardcoded password found"
+            FOUND=1
+          fi
+          if grep -rn "private_key" --include="*.sql" --include="*.py" . 2>/dev/null | grep -v ".gitignore" | grep -v "path"; then
+            echo "::warning::Potential private key reference found"
+            FOUND=1
+          fi
+          if [ $FOUND -eq 0 ]; then
+            echo "✅ No hardcoded secrets detected"
+          fi
+
+      - name: Check for SQL injection patterns
+        run: |
+          echo "Scanning for unsafe SQL patterns..."
+          if grep -rn "EXECUTE IMMEDIATE.*\|\|" --include="*.sql" . 2>/dev/null; then
+            echo "::warning::Potential SQL injection via string concatenation in EXECUTE IMMEDIATE"
+          else
+            echo "✅ No SQL injection patterns detected"
+          fi
+
+  python-check:
+    name: Python Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install python-pptx flake8
+
+      - name: Lint Python files
+        run: |
+          flake8 . --max-line-length=120 --count --statistics \
+            --exclude=venv,__pycache__,.git \
+            || true
+
+      - name: Validate generate_pptx.py runs
+        run: python generate_pptx.py

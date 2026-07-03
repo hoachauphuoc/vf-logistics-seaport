@@ -1,0 +1,152 @@
+name: Test - Snowflake Procedures
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '*.sql'
+  workflow_dispatch:
+
+env:
+  SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+  SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+  SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+  SNOWFLAKE_ROLE: ACCOUNTADMIN
+  SNOWFLAKE_WAREHOUSE: COMPUTE_WH
+  SNOWFLAKE_DATABASE: MENDIX_APP
+
+jobs:
+  integration-tests:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install snowflake-connector-python pytest
+
+      - name: Run procedure tests
+        run: |
+          python - << 'EOF'
+          import snowflake.connector
+          import os
+          import json
+          import sys
+
+          conn = snowflake.connector.connect(
+              account=os.environ['SNOWFLAKE_ACCOUNT'],
+              user=os.environ['SNOWFLAKE_USER'],
+              password=os.environ['SNOWFLAKE_PASSWORD'],
+              role=os.environ['SNOWFLAKE_ROLE'],
+              warehouse=os.environ['SNOWFLAKE_WAREHOUSE'],
+              database=os.environ['SNOWFLAKE_DATABASE'],
+              schema='AGENTS'
+          )
+
+          cursor = conn.cursor()
+          results = []
+          passed = 0
+          failed = 0
+
+          # Test suite
+          tests = [
+              {
+                  "name": "CLASSIFY_DOCUMENT_TEXT - Valid B/L",
+                  "sql": "CALL CLASSIFY_DOCUMENT_TEXT('BILL OF LADING No. TEST123 Vessel: TEST STAR')",
+                  "expect_key": "document_type"
+              },
+              {
+                  "name": "CHECK_COMPLIANCE - Valid B/L ID",
+                  "sql": "CALL CHECK_COMPLIANCE(1)",
+                  "expect_key": "overall_status"
+              },
+              {
+                  "name": "DETECT_DUPLICATES - Full scan",
+                  "sql": "CALL DETECT_DUPLICATES(NULL)",
+                  "expect_key": "alerts_found"
+              },
+              {
+                  "name": "ENRICH_DOCUMENT - Valid B/L ID",
+                  "sql": "CALL ENRICH_DOCUMENT(1)",
+                  "expect_key": "enrichments"
+              },
+              {
+                  "name": "GET_SHIPMENT_STATS - Japan",
+                  "sql": "SELECT GET_SHIPMENT_STATS('Japan')",
+                  "expect_contains": "total_shipments"
+              },
+              {
+                  "name": "AI_COMPLETE_WITH_RETRY - Simple prompt",
+                  "sql": "CALL AI_COMPLETE_WITH_RETRY('llama3-8b', 'Say hello in 3 words', 2, 'test')",
+                  "expect_key": "response"
+              },
+              {
+                  "name": "BILL_OF_LADING - Record count",
+                  "sql": "SELECT COUNT(*) FROM BILL_OF_LADING",
+                  "expect_min": 10000
+              },
+              {
+                  "name": "PORT_MASTER - Record count",
+                  "sql": "SELECT COUNT(*) FROM PORT_MASTER",
+                  "expect_min": 50
+              },
+              {
+                  "name": "CLASSIFY_DOCUMENT_TEXT - Empty input",
+                  "sql": "CALL CLASSIFY_DOCUMENT_TEXT('')",
+                  "expect_no_crash": True
+              },
+              {
+                  "name": "CHECK_COMPLIANCE - Invalid ID",
+                  "sql": "CALL CHECK_COMPLIANCE(99999)",
+                  "expect_no_crash": True
+              },
+          ]
+
+          print("=" * 60)
+          print("VF LOGISTICS - INTEGRATION TEST SUITE")
+          print("=" * 60)
+
+          for test in tests:
+              try:
+                  cursor.execute(test["sql"])
+                  row = cursor.fetchone()
+                  result = str(row[0]) if row else ""
+                  
+                  # Validate
+                  if "expect_key" in test:
+                      assert test["expect_key"] in result, f"Expected key '{test['expect_key']}' not in response"
+                  elif "expect_contains" in test:
+                      assert test["expect_contains"] in result, f"Expected '{test['expect_contains']}' not in response"
+                  elif "expect_min" in test:
+                      val = int(row[0])
+                      assert val >= test["expect_min"], f"Expected >= {test['expect_min']}, got {val}"
+                  elif "expect_no_crash" in test:
+                      pass  # If we got here without exception, it passed
+                  
+                  print(f"  ✅ PASS: {test['name']}")
+                  passed += 1
+              except Exception as e:
+                  print(f"  ❌ FAIL: {test['name']} — {str(e)[:80]}")
+                  failed += 1
+
+          print("=" * 60)
+          print(f"RESULTS: {passed} passed, {failed} failed, {len(tests)} total")
+          print("=" * 60)
+
+          cursor.close()
+          conn.close()
+
+          if failed > 0:
+              sys.exit(1)
+          EOF
+
+      - name: Test summary
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "Integration tests completed. Check logs for details." >> $GITHUB_STEP_SUMMARY
