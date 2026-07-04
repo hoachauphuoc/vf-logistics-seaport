@@ -1,0 +1,200 @@
+-- ============================================
+-- OPERATIONAL DATA - Sample Export
+-- AI logs, Fraud alerts, SAP documents, etc.
+-- ============================================
+
+-- ============================================
+-- 1. AI_CALL_LOG (last 100 calls)
+-- ============================================
+
+CREATE OR REPLACE TABLE AI_CALL_LOG (
+    CALL_ID NUMBER(38,0) PRIMARY KEY AUTOINCREMENT,
+    MODEL_NAME VARCHAR(50),
+    PROMPT VARCHAR(5000),
+    RESPONSE VARCHAR(10000),
+    TOTAL_TOKENS NUMBER(10,0),
+    CALL_STATUS VARCHAR(20),
+    ERROR_MESSAGE VARCHAR(1000),
+    CALL_TIMESTAMP TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    CONTEXT VARCHAR(100)
+);
+
+-- Sample data (last 100 AI calls - export with query below):
+-- SELECT * FROM AI_CALL_LOG ORDER BY CALL_TIMESTAMP DESC LIMIT 100;
+
+-- ============================================
+-- 2. FRAUD_ALERT (all open alerts)
+-- ============================================
+
+CREATE OR REPLACE TABLE FRAUD_ALERT (
+    ALERT_ID NUMBER(38,0) PRIMARY KEY AUTOINCREMENT,
+    ALERT_TYPE VARCHAR(50),
+    SEVERITY VARCHAR(20),
+    DESCRIPTION VARCHAR(1000),
+    DOCUMENT_IDS VARCHAR(200),
+    STATUS VARCHAR(20) DEFAULT 'OPEN',
+    ASSIGNED_TO VARCHAR(100),
+    CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    RESOLVED_AT TIMESTAMP_NTZ,
+    RESOLUTION_NOTES VARCHAR(2000)
+);
+
+-- Sample data (all OPEN alerts):
+-- SELECT * FROM FRAUD_ALERT WHERE STATUS = 'OPEN' ORDER BY CREATED_AT DESC;
+
+-- ============================================
+-- 3. AI_ANOMALY_REPORT (AI Auto-Explain reports)
+-- ============================================
+
+CREATE OR REPLACE TABLE AI_ANOMALY_REPORT (
+    REPORT_ID NUMBER(38,0) PRIMARY KEY AUTOINCREMENT,
+    ANOMALY_TYPE VARCHAR(50),
+    SEVERITY VARCHAR(20),
+    BL_IDS VARCHAR(200),
+    BUSINESS_EXPLANATION VARCHAR(2000),
+    RECOMMENDED_ACTIONS VARCHAR(1000),
+    GENERATED_BY VARCHAR(50) DEFAULT 'AI_AUTO',
+    LANGUAGE VARCHAR(5) DEFAULT 'EN',
+    CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    STATUS VARCHAR(20) DEFAULT 'NEW'
+);
+
+-- Sample data (last 50 reports):
+-- SELECT * FROM AI_ANOMALY_REPORT ORDER BY CREATED_AT DESC LIMIT 50;
+
+-- ============================================
+-- 4. SAP_FI_DOCUMENT (SAP Financial postings)
+-- ============================================
+
+CREATE OR REPLACE TABLE SAP_FI_DOCUMENT (
+    FI_DOC_ID NUMBER(38,0) PRIMARY KEY AUTOINCREMENT,
+    SAP_DOCUMENT_NUMBER VARCHAR(10),
+    COMPANY_CODE VARCHAR(4),
+    FISCAL_YEAR NUMBER(4,0),
+    POSTING_DATE DATE,
+    DOCUMENT_TYPE VARCHAR(2),
+    REFERENCE VARCHAR(16),
+    DOCUMENT_HEADER_TEXT VARCHAR(25),
+    CURRENCY_CODE VARCHAR(5),
+    TOTAL_AMOUNT FLOAT,
+    BL_ID NUMBER(38,0),
+    CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+);
+
+-- Sample data (last 100 postings):
+-- SELECT * FROM SAP_FI_DOCUMENT ORDER BY CREATED_AT DESC LIMIT 100;
+
+-- ============================================
+-- 5. COMPLIANCE_CHECK_RESULT (audit trail)
+-- ============================================
+
+CREATE OR REPLACE TABLE COMPLIANCE_CHECK_RESULT (
+    CHECK_ID NUMBER(38,0) PRIMARY KEY AUTOINCREMENT,
+    BL_ID NUMBER(38,0),
+    CHECK_TIMESTAMP TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    COMPLIANT BOOLEAN,
+    VIOLATIONS ARRAY,
+    RISK_SCORE NUMBER(10,0),
+    RULES_CHECKED NUMBER(10,0)
+);
+
+-- Sample data (last 200 checks):
+-- SELECT * FROM COMPLIANCE_CHECK_RESULT ORDER BY CHECK_TIMESTAMP DESC LIMIT 200;
+
+-- ============================================
+-- EXPORT ALL OPERATIONAL DATA (SUMMARY)
+-- ============================================
+
+-- Summary statistics:
+SELECT 
+    'AI_CALL_LOG' as TABLE_NAME,
+    COUNT(*) as TOTAL_RECORDS,
+    MAX(CALL_TIMESTAMP) as LATEST_TIMESTAMP
+FROM AI_CALL_LOG
+
+UNION ALL
+
+SELECT 
+    'FRAUD_ALERT',
+    COUNT(*),
+    MAX(CREATED_AT)
+FROM FRAUD_ALERT
+
+UNION ALL
+
+SELECT 
+    'AI_ANOMALY_REPORT',
+    COUNT(*),
+    MAX(CREATED_AT)
+FROM AI_ANOMALY_REPORT
+
+UNION ALL
+
+SELECT 
+    'SAP_FI_DOCUMENT',
+    COUNT(*),
+    MAX(CREATED_AT)
+FROM SAP_FI_DOCUMENT
+
+UNION ALL
+
+SELECT 
+    'COMPLIANCE_CHECK_RESULT',
+    COUNT(*),
+    MAX(CHECK_TIMESTAMP)
+FROM COMPLIANCE_CHECK_RESULT;
+
+-- ============================================
+-- EXPORT INSTRUCTIONS
+-- ============================================
+
+-- METHOD 1: CSV Export via Query
+-- Run each query and save output as CSV
+
+-- AI logs (last 1000):
+SELECT * FROM AI_CALL_LOG ORDER BY CALL_TIMESTAMP DESC LIMIT 1000;
+
+-- Open fraud alerts:
+SELECT * FROM FRAUD_ALERT WHERE STATUS = 'OPEN';
+
+-- AI reports (last 500):
+SELECT * FROM AI_ANOMALY_REPORT ORDER BY CREATED_AT DESC LIMIT 500;
+
+-- SAP postings (last 500):
+SELECT * FROM SAP_FI_DOCUMENT ORDER BY CREATED_AT DESC LIMIT 500;
+
+-- Compliance checks (last 1000):
+SELECT * FROM COMPLIANCE_CHECK_RESULT ORDER BY CHECK_TIMESTAMP DESC LIMIT 1000;
+
+-- METHOD 2: Snowflake COPY INTO
+-- Unload to stage, then download
+
+COPY INTO @BACKUP_STAGE/AI_CALL_LOG.csv
+FROM (SELECT * FROM AI_CALL_LOG ORDER BY CALL_TIMESTAMP DESC LIMIT 1000)
+FILE_FORMAT = (TYPE = CSV, COMPRESSION = GZIP);
+
+COPY INTO @BACKUP_STAGE/FRAUD_ALERT.csv
+FROM (SELECT * FROM FRAUD_ALERT WHERE STATUS = 'OPEN')
+FILE_FORMAT = (TYPE = CSV, COMPRESSION = GZIP);
+
+-- Repeat for other tables...
+
+-- ============================================
+-- RESTORE INSTRUCTIONS
+-- ============================================
+
+-- 1. Create tables (run DDL above)
+
+-- 2. Load data from CSV:
+
+PUT file://C:\backup\AI_CALL_LOG.csv @IMPORT_STAGE;
+COPY INTO AI_CALL_LOG FROM @IMPORT_STAGE/AI_CALL_LOG.csv
+FILE_FORMAT = (TYPE = CSV, SKIP_HEADER = 1);
+
+-- 3. Verify counts:
+
+SELECT 'AI_CALL_LOG', COUNT(*) FROM AI_CALL_LOG
+UNION ALL
+SELECT 'FRAUD_ALERT', COUNT(*) FROM FRAUD_ALERT
+UNION ALL
+SELECT 'AI_ANOMALY_REPORT', COUNT(*) FROM AI_ANOMALY_REPORT;
